@@ -29,6 +29,7 @@ SceneManager::SceneManager(const int32_t kWindowWidth, const int32_t kWindowHeig
 
 	//↓↓↓↓↓↓↓↓↓↓↓↓↓↓読み込みたいモデル↓↓↓↓↓↓↓↓↓↓↓↓↓
 	commonData_->modelHandle_.push_back(myDirectX_->LoadObjFile("resources/Block", "block.obj")); //ブロックモデル
+	commonData_->modelHandle_.push_back(myDirectX_->LoadObjFile("resources/skydome", "skydome.obj"));
 	//↑↑↑↑↑↑↑↑↑↑↑↑↑↑読み込みたいモデル↑↑↑↑↑↑↑↑↑↑↑↑↑
 
 	//↓↓↓↓↓↓↓↓↓↓↓↓↓↓読み込みたい量↓↓↓↓↓↓↓↓↓↓↓↓↓
@@ -36,6 +37,7 @@ SceneManager::SceneManager(const int32_t kWindowWidth, const int32_t kWindowHeig
 	myDirectX_->CreateDrawResource(MyDirectX::kSphere, 1);
 	myDirectX_->CreateDrawResource(MyDirectX::kBox, 1);
 	myDirectX_->CreateModelDrawResource(commonData_->modelHandle_[int(ModelType::Block)], 1000);
+	myDirectX_->CreateModelDrawResource(commonData_->modelHandle_[int(ModelType::skydome)], 1);
 	//↑↑↑↑↑↑↑↑↑↑↑↑↑↑読み込みたい量↑↑↑↑↑↑↑↑↑↑↑↑↑
 
 	//最初のシーンを挿入

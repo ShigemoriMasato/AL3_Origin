@@ -18,6 +18,7 @@ private:
 	std::vector<Transform> transform;
 
 	int block_;
+	int skydome_;
 
 	Camera* camera;
 	DebugCamera* debugCamera;

@@ -19,6 +19,7 @@ TitleScene::TitleScene(CommonData* commonData) : Scene(commonData) {
 	}
 
 	block_ = commonData_->modelHandle_[int(ModelType::Block)];
+	skydome_ = commonData_->modelHandle_[int(ModelType::skydome)];
 }
 
 TitleScene::~TitleScene() {
@@ -58,4 +59,6 @@ void TitleScene::Draw() const {
 	for (int i = 0; i < 100; ++i) {
 		Render::DrawModel(block_, MakeAffineMatrix(transform[i]), camera, { 1.0f, 1.0f, 1.0f, 1.0f, true }, {});
 	}
+
+	Render::DrawModel(skydome_, MakeIdentity4x4(), camera, { 1.0f, 1.0f, 1.0f, 1.0f, true }, {});
 }

@@ -3,6 +3,7 @@
 
 enum class ModelType {
 	Block,
+	skydome,
 
 	ModelCount
 };
