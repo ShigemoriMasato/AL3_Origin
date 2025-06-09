@@ -302,7 +302,7 @@ int MyDirectX::LoadTexture(std::string path) {
     //SRVを作成する
     device->CreateShaderResourceView(textureResource.back(), &srvDesc, textureSrvHandleCPU);
 
-    return readTextureCount;
+    return readTextureCount - 1;
 }
 
 [[nodiscard]]
@@ -325,7 +325,6 @@ int MyDirectX::LoadObjFile(const std::string& directoryPath, const std::string& 
             Vector4 position;
             s >> position.x >> position.y >> position.z;
             position.w = 1.0f;
-			position.x *= -1.0f; //y軸も反転
             positions.push_back(position); //位置を格納
         } else if (identifier == "vt") {
             Vector2 texcoord;
@@ -466,7 +465,8 @@ int MyDirectX::CreateModelDrawResource(uint32_t modelHandle, uint32_t createNum)
 }
 
 ModelMaterial MyDirectX::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename) {
-    ModelMaterial materialData;
+    ModelMaterial material = {};
+    std::string textureFilePath;
     std::string line;
 	std::ifstream file(directoryPath + "/" + filename); //ファイルを開く
     assert(file.is_open() && "MyDirectX::LoadMaterialTemplateFile cannot open the mtlFile");
@@ -481,11 +481,12 @@ ModelMaterial MyDirectX::LoadMaterialTemplateFile(const std::string& directoryPa
             std::string textureFilename;
 			s >> textureFilename;
             //連結してファイルパスにする
-			materialData.textureFilePath = directoryPath + "/" + textureFilename;
+			textureFilePath = directoryPath + "/" + textureFilename;
+            material.textureHandle = LoadTexture(textureFilePath);
         }
     }
 
-    return materialData;
+    return material;
 }
 
 void MyDirectX::BeginFrame() {
@@ -1288,7 +1289,7 @@ void MyDirectX::DrawModel(int modelHandle, Matrix4x4 worldMatrix, Matrix4x4 wvpM
     //光のCBufferの場所を設定
     commandList->SetGraphicsRootConstantBufferView(3, directionalLightResource[index][drawCount[index]]->GetGPUVirtualAddress());
     //テクスチャの設定
-    commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU[0]);
+    commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU[modelList_[modelHandle].material.textureHandle]);
     //形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけばよい
     commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->DrawInstanced(UINT(modelList_[modelHandle].vertices.size()), 1, 0, 0);
@@ -1513,83 +1514,71 @@ void MyDirectX::DrawBox(Matrix4x4 worldMatrix, Matrix4x4 wvpMatrix, MaterialData
 	VertexData* vertexData = nullptr;
 	vertexResource[kBox][drawCount[kBox]]->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 
-    Vector3 normals[6] = {
-        { 0,  0,  1}, { 0,  0, -1}, {-1,  0,  0},
-        { 1,  0,  0}, { 0,  1,  0}, { 0, -1,  0}
+	uint32_t* indexData = nullptr;
+	indexResource[kBox][drawCount[kBox]]->Map(0, nullptr, reinterpret_cast<void**>(&indexData));
+    
+    const Vector2 texcoords[4] = {
+        {0.0f, 1.0f},
+        {1.0f, 1.0f},
+        {1.0f, 0.0f},
+        {0.0f, 0.0f}
     };
 
-    Vector4 facePositions[4] = {
-        {0, 0, 0, 1},
-        {1, 0, 0, 1},
-        {1, 1, 0, 1},
-        {0, 1, 0, 1}
+    
+    const Vector3 normals[6] = {
+        { 0,  0, -1}, 
+        { 0,  0,  1}, 
+        {-1,  0,  0}, 
+        { 1,  0,  0}, 
+        { 0,  1,  0}, 
+        { 0, -1,  0}  
     };
 
-    Vector2 faceUVs[4] = {
-        {0, 0}, {1, 0}, {1, 1}, {0, 1}
+    const Vector2 faceVerts[4] = {
+        {-1, -1}, // 左下
+        { 1, -1}, // 右下
+        { 1,  1}, // 右上
+        {-1,  1}  // 左上
     };
 
+    int index = 0;
     for (int face = 0; face < 6; ++face) {
         for (int i = 0; i < 4; ++i) {
-            int index = face * 4 + i;
-            VertexData& vert = vertexData[index];
-            vert.normal = normals[face];
-            vert.texcoord = faceUVs[i];
+            Vector3 pos;
+
+            float x = faceVerts[i].x;
+            float y = faceVerts[i].y;
 
             switch (face) {
-            case 0: // 前面 
-                vert.position = { facePositions[i].x, facePositions[i].y, 1.0f, 1.0f };
-                break;
-            case 1: // 後面
-                vert.position = { 1.0f - facePositions[i].x, facePositions[i].y, 0.0f, 1.0f };
-                break;
-            case 2: // 左面 
-                switch (i) {
-                case 0: 
-                    vert.position = { 0.0f, 0.0f, 0.0f, 1.0f }; 
-                    break; // facePositions[1]
-                case 1: 
-                    vert.position = { 0.0f, 0.0f, 1.0f, 1.0f };
-                    break; // facePositions[0]
-                case 2: 
-                    vert.position = { 0.0f, 1.0f, 1.0f, 1.0f }; 
-                    break; // facePositions[3]
-                case 3: 
-                    vert.position = { 0.0f, 1.0f, 0.0f, 1.0f }; 
-                    break; // facePositions[2]
-                }
-                break;
-            case 3: // 右面 
-                vert.position = { 1.0f, facePositions[i].y, facePositions[i].x, 1.0f };
-                break;
-            case 4: // 上面 
-                vert.position = { facePositions[i].x, 1.0f, 1.0f - facePositions[i].y, 1.0f };
-                break;
-            case 5: // 底面 
-                vert.position = { facePositions[i].x, 0.0f, facePositions[i].y, 1.0f };
-                break;
+            case 0: pos = { x, y, -1 }; break; // back
+            case 1: pos = { x, y,  1 }; break; // front
+            case 2: pos = { -1, y, x }; break; // left
+            case 3: pos = { 1, y, -x }; break; // right
+            case 4: pos = { x,  1, -y }; break; // top
+            case 5: pos = { x, -1, y }; break; // bottom
             }
+
+            vertexData[index++] = {
+                {pos.x, pos.y, pos.z, 1.0f},
+                texcoords[i],
+                normals[face]
+            };
         }
     }
 
-	uint32_t* indexData = nullptr;
-	indexResource[kBox][drawCount[kBox]]->Map(0, nullptr, reinterpret_cast<void**>(&indexData));
-
+    int idx = 0;
     for (int face = 0; face < 6; ++face) {
         int base = face * 4;
-        int idx = face * 6;
+        // 三角形1
+        indexData[idx++] = base + 0;
+        indexData[idx++] = base + 2;
+        indexData[idx++] = base + 1;
 
-        // 三角形1（0,1,2）
-        indexData[idx + 0] = base + 0;
-        indexData[idx + 1] = base + 1;
-        indexData[idx + 2] = base + 2;
-
-        // 三角形2（2,3,0）
-        indexData[idx + 3] = base + 2;
-        indexData[idx + 4] = base + 3;
-        indexData[idx + 5] = base + 0;
+        // 三角形2
+        indexData[idx++] = base + 0;
+        indexData[idx++] = base + 3;
+        indexData[idx++] = base + 2;
     }
-
 
     TramsformMatrixData* wvpData = nullptr;
     wvpResource[kBox][drawCount[kBox]]->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));

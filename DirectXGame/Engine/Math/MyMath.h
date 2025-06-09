@@ -115,4 +115,6 @@ namespace MyMath {
 	Vector3 ConvertVector(const Vector4& v);
 
 	float cot(float radian);
+
+	Vector3 Normalize(Vector3 vec);
 }

@@ -8,35 +8,38 @@ SceneManager::SceneManager(const int32_t kWindowWidth, const int32_t kWindowHeig
 
 	commonData_ = new CommonData();
 
-	//最初のシーンを挿入
-	scene_ = new TitleScene(commonData_);
-
 	nextScene_ = nullptr;
 
 	myDirectX_ = new MyDirectX(kWindowWidth, kWindowHeight);
 
 	renderer_ = new Render(myDirectX_);
-	scene_->SetRenderer(renderer_);
 
 	input_ = new Input(myDirectX_->GetMyWndClass().hInstance, myDirectX_->GetMyHwnd());
 	input_->Initialize();
 
 	sound_ = new Sound();
+
 	//↓↓↓↓↓↓↓↓↓↓↓↓↓↓読み込みたい音↓↓↓↓↓↓↓↓↓↓↓↓↓
 
 	//↑↑↑↑↑↑↑↑↑↑↑↑↑↑読み込みたい音↑↑↑↑↑↑↑↑↑↑↑↑↑
-
-
 
 	//↓↓↓↓↓↓↓↓↓↓↓↓↓↓読み込みたい画像↓↓↓↓↓↓↓↓↓↓↓↓↓
 
 	//↑↑↑↑↑↑↑↑↑↑↑↑↑↑読み込みたい画像↑↑↑↑↑↑↑↑↑↑↑↑↑
 
+	//↓↓↓↓↓↓↓↓↓↓↓↓↓↓読み込みたいモデル↓↓↓↓↓↓↓↓↓↓↓↓↓
+	commonData_->modelHandle_.push_back(myDirectX_->LoadObjFile("resources/Block", "block.obj")); //ブロックモデル
+	//↑↑↑↑↑↑↑↑↑↑↑↑↑↑読み込みたいモデル↑↑↑↑↑↑↑↑↑↑↑↑↑
+
 	//↓↓↓↓↓↓↓↓↓↓↓↓↓↓読み込みたい量↓↓↓↓↓↓↓↓↓↓↓↓↓
 	myDirectX_->CreateDrawResource(MyDirectX::kPrism, 1);
 	myDirectX_->CreateDrawResource(MyDirectX::kSphere, 1);
 	myDirectX_->CreateDrawResource(MyDirectX::kBox, 1);
+	myDirectX_->CreateModelDrawResource(commonData_->modelHandle_[int(ModelType::Block)], 1000);
 	//↑↑↑↑↑↑↑↑↑↑↑↑↑↑読み込みたい量↑↑↑↑↑↑↑↑↑↑↑↑↑
+
+	//最初のシーンを挿入
+	scene_ = new TitleScene(commonData_);
 }
 
 SceneManager::~SceneManager() {
@@ -59,7 +62,6 @@ void SceneManager::Update() {
 	if (nextScene_ != nullptr) {
 		delete scene_;
 		scene_ = nextScene_;
-		nextScene_->SetRenderer(renderer_);
 		nextScene_ = nullptr;
 	}
 

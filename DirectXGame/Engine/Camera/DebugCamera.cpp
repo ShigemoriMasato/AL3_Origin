@@ -12,6 +12,7 @@ void DebugCamera::Initialize(Camera* camera) {
 	center_ = {};
 
 	transform_.scale = Vector3(1.0f, 1.0f, 1.0f);
+	transform_.position = Vector3(0.0f, 0.0f, -20.0f);
 }
 
 void DebugCamera::Update() {

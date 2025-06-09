@@ -506,6 +506,11 @@ float MyMath::cot(float radian) {
 	return std::cosf(radian) / std::sinf(radian);
 }
 
+Vector3 MyMath::Normalize(Vector3 vec) {
+	float length = std::sqrtf(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
+	return { vec.x / length, vec.y / length, vec.z / length };
+}
+
 Matrix3x3 Matrix::Inverse(const Matrix3x3& mat) {
 	float d = mat.m[0][0] * mat.m[1][1] * mat.m[2][2] + mat.m[0][1] * mat.m[1][2] * mat.m[2][0] + mat.m[0][2] * mat.m[1][0] * mat.m[2][1] -
 		mat.m[0][2] * mat.m[1][1] * mat.m[2][0] - mat.m[0][1] * mat.m[1][0] * mat.m[2][2] - mat.m[0][0] * mat.m[1][2] * mat.m[2][1];

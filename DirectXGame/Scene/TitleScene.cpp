@@ -10,6 +10,15 @@ TitleScene::TitleScene(CommonData* commonData) : Scene(commonData) {
 	player_ = new Player();
 	player_->Initialize(camera);
 	debugCamera->Initialize();
+	for (int i = 0; i < 100; ++i) {
+		Transform tf;
+		tf.position = { float(i % 10), float(i / 10), 0.0f };
+		tf.rotation = { 0.0f, 0.0f, 0.0f };
+		tf.scale = { 1.0f, 1.0f, 1.0f };
+		transform.push_back(tf);
+	}
+
+	block_ = commonData_->modelHandle_[int(ModelType::Block)];
 }
 
 TitleScene::~TitleScene() {
@@ -37,11 +46,16 @@ Scene* TitleScene::Update() {
 		camera->SetTransform(transform);
 		camera->SetProjectionMatrix(PerspectiveFovDesc());
 	}
+
 	camera->MakeMatrix();
 
 	return nullptr;
 }
 
 void TitleScene::Draw() const {
-	player_->Draw();
+	//player_->Draw();
+
+	for (int i = 0; i < 100; ++i) {
+		Render::DrawModel(block_, MakeAffineMatrix(transform[i]), camera, { 1.0f, 1.0f, 1.0f, 1.0f, true }, {});
+	}
 }

@@ -15,6 +15,9 @@ public:
 private:
 
 	Player* player_ = nullptr;
+	std::vector<Transform> transform;
+
+	int block_;
 
 	Camera* camera;
 	DebugCamera* debugCamera;

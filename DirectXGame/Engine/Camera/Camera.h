@@ -8,7 +8,7 @@ struct Transform;
 
 struct PerspectiveFovDesc {
 	float fovY = 0.45f;
-	float aspectRatio = 1280 / 720;
+	float aspectRatio = 1280.0f / 720.0f;
 	float nearClip = 0.1f;
 	float farClip = 100.0f;
 };

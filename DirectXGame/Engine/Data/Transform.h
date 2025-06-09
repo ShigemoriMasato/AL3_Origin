@@ -32,7 +32,7 @@ struct MaterialData final {
 };
 
 struct ModelMaterial final {
-	std::string textureFilePath;
+	int textureHandle;
 };
 
 struct TramsformMatrixData final {
