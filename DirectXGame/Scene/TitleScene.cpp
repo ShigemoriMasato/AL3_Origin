@@ -5,25 +5,20 @@
 using namespace Matrix;
 
 TitleScene::TitleScene(CommonData* commonData) : Scene(commonData) {
-	camera = new Camera();
+	camera_ = new Camera();
 	debugCamera = new DebugCamera();
 	player_ = new Player();
-	player_->Initialize(camera);
-	debugCamera->Initialize();
-	for (int i = 0; i < 100; ++i) {
-		Transform tf;
-		tf.position = { float(i % 10), float(i / 10), 0.0f };
-		tf.rotation = { 0.0f, 0.0f, 0.0f };
-		tf.scale = { 1.0f, 1.0f, 1.0f };
-		transform.push_back(tf);
-	}
+	player_->Initialize(camera_);
 
-	block_ = commonData_->modelHandle_[int(ModelType::Block)];
+	mapChip_ = new MapChip();
+	mapChip_->Initialize("resources/blocks.csv", commonData_->modelHandle_[int(ModelType::Block)], camera_);
+
+	debugCamera->Initialize();
 	skydome_ = commonData_->modelHandle_[int(ModelType::skydome)];
 }
 
 TitleScene::~TitleScene() {
-	delete camera;
+	delete camera_;
 	delete player_;
 }
 
@@ -37,28 +32,22 @@ Scene* TitleScene::Update() {
 
 	if (isDebugCamera) {
 		debugCamera->Update();
-		*camera = debugCamera->GetCamera();
+		*camera_ = debugCamera->GetCamera();
 	} else {
-		Transform transform;
-		transform.position = { 0.0f, 0.0f, -10.0f };
-		transform.rotation = { 0.0f, 0.0f, 0.0f };
-		transform.scale = { 1.0f, 1.0f, 1.0f };
+		Transform transform{};
+		transform.position.z = -10.0f;
 
-		camera->SetTransform(transform);
-		camera->SetProjectionMatrix(PerspectiveFovDesc());
+		camera_->SetTransform(transform);
+		camera_->SetProjectionMatrix(PerspectiveFovDesc());
 	}
 
-	camera->MakeMatrix();
+	camera_->MakeMatrix();
 
 	return nullptr;
 }
 
 void TitleScene::Draw() const {
-	//player_->Draw();
+	Render::DrawModel(skydome_, MakeIdentity4x4(), camera_, { 1.0f, 1.0f, 1.0f, 1.0f, true }, {});
 
-	for (int i = 0; i < 100; ++i) {
-		Render::DrawModel(block_, MakeAffineMatrix(transform[i]), camera, { 1.0f, 1.0f, 1.0f, 1.0f, true }, {});
-	}
-
-	Render::DrawModel(skydome_, MakeIdentity4x4(), camera, { 1.0f, 1.0f, 1.0f, 1.0f, true }, {});
+	mapChip_->Draw();
 }

@@ -3,6 +3,7 @@
 #include "Common/CommonData.h"
 #include "../Engine/Camera/DebugCamera.h"
 #include "../Player.h"
+#include "../MapChip.h"
 
 class TitleScene : public Scene {
 public:
@@ -15,12 +16,11 @@ public:
 private:
 
 	Player* player_ = nullptr;
-	std::vector<Transform> transform;
+	MapChip* mapChip_ = nullptr;
 
-	int block_;
 	int skydome_;
 
-	Camera* camera;
+	Camera* camera_;
 	DebugCamera* debugCamera;
 
 	bool isDebugCamera = false;

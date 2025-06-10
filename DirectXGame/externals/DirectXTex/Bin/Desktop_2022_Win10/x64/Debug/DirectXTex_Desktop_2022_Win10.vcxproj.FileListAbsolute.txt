@@ -1,2 +1,3 @@
 C:\Users\k024g\source\repos\CG2\DirectXGame\DirectXGame\externals\DirectXTex\Bin\Desktop_2022_Win10\x64\Debug\DirectXTex.lib
 C:\Users\k024g\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\Bin\Desktop_2022_Win10\x64\Debug\DirectXTex.lib
+C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\Bin\Desktop_2022_Win10\x64\Debug\DirectXTex.lib
