@@ -20,6 +20,8 @@ public:
 
 private:
 
+	Vector3 GetPosByIndex(int x, int y);
+
 	std::vector<std::vector<MapChipType>> mapData_;
 	std::vector<std::vector<Transform>> mapTransforms_;
 

@@ -683,9 +683,9 @@ Matrix4x4 Matrix::MakeScaleMatrix(const Vector3& scale) {
 }
 
 Matrix4x4 Matrix::MakeAffineMatrix(const Vector3& translation, const Vector3& rotation, const Vector3& scale) {
-	return MakeTranslationMatrix(translation) *
+	return MakeScaleMatrix(scale) *
 		MakeRotationMatrix(rotation) *
-		Matrix::MakeScaleMatrix(scale);
+		MakeTranslationMatrix(translation);
 }
 
 Matrix4x4 Matrix::MakeAffineMatrix(Transform transform) {

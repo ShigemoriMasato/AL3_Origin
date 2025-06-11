@@ -51,7 +51,7 @@ void MapChip::Initialize(const char* filepath, int blockHandle, Camera* camera) 
 	for (uint32_t i = 0; i < blockNumHeight_; ++i) {
 		for (uint32_t j = 0; j < blockNumWidth_; ++j) {
 			mapTransforms_[i][j] = {};
-			mapTransforms_[i][j].position = Vector3(j * blockSize_, i * blockSize_, 0.0f);
+			mapTransforms_[i][j].position = GetPosByIndex(j, i);
 		}
 	}
 
@@ -72,4 +72,12 @@ void MapChip::Draw() {
 			Render::DrawModel(blockHandle_, MakeAffineMatrix(mapTransforms_[i][j]), camera_);
 		}
 	}
+}
+
+Vector3 MapChip::GetPosByIndex(int x, int y) {
+	Vector3 pos;
+	pos.x = x * blockSize_ - blockSize_ / 2;
+	pos.y = (blockNumHeight_ - 1 - y) * blockSize_ + blockSize_ / 2;
+	pos.z = 0.0f;
+	return pos;
 }

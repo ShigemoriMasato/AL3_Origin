@@ -8,7 +8,7 @@ TitleScene::TitleScene(CommonData* commonData) : Scene(commonData) {
 	camera_ = new Camera();
 	debugCamera = new DebugCamera();
 	player_ = new Player();
-	player_->Initialize(camera_);
+	player_->Initialize(camera_, commonData_->modelHandle_[int(ModelType::player)]);
 
 	mapChip_ = new MapChip();
 	mapChip_->Initialize("resources/blocks.csv", commonData_->modelHandle_[int(ModelType::Block)], camera_);
@@ -48,6 +48,8 @@ Scene* TitleScene::Update() {
 
 void TitleScene::Draw() const {
 	Render::DrawModel(skydome_, MakeIdentity4x4(), camera_, { 1.0f, 1.0f, 1.0f, 1.0f, true }, {});
+
+	player_->Draw();
 
 	mapChip_->Draw();
 }

@@ -4,6 +4,8 @@
 enum class ModelType {
 	Block,
 	skydome,
+	player,
+	enemy,
 
 	ModelCount
 };
