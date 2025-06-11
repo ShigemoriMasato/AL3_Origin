@@ -11,7 +11,7 @@ enum class ModelType {
 };
 
 enum class TextureType {
-
+	block,
 };
 
 struct CommonData {

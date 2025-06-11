@@ -4,6 +4,7 @@
 #include <cassert>
 #include <string>
 #include "Engine/Render/Render.h"
+#include "CameraController.h"
 
 using namespace Matrix;
 
@@ -69,15 +70,60 @@ void MapChip::Draw() {
 				continue;
 			}
 
-			Render::DrawModel(blockHandle_, MakeAffineMatrix(mapTransforms_[i][j]), camera_);
+			Render::DrawBox(
+				MakeAffineMatrix(mapTransforms_[i][j]),
+				camera_,
+				{ 1.0f, 1.0f, 1.0f, 1.0f, true },
+				{},
+				blockHandle_
+			);
 		}
 	}
 }
 
 Vector3 MapChip::GetPosByIndex(int x, int y) {
 	Vector3 pos;
-	pos.x = x * blockSize_ - blockSize_ / 2;
+	pos.x = x * blockSize_ + blockSize_ / 2;
 	pos.y = (blockNumHeight_ - 1 - y) * blockSize_ + blockSize_ / 2;
 	pos.z = 0.0f;
 	return pos;
+}
+
+MapChipType MapChip::GetMapchipTypeByIndex(uint32_t xIndex, uint32_t yIndex) {
+
+	//範囲外処理
+	if (xIndex < 0 || blockNumHeight_ - 1 < xIndex) {
+		return MapChipType::blank;
+	}
+	if (yIndex < 0 || blockNumWidth_ - 1 < yIndex) {
+		return MapChipType::blank;
+	}
+
+	return mapData_[yIndex][xIndex];
+
+}
+
+Vector3 MapChip::GetMapchipPositionByIndex(uint32_t xIndex, uint32_t yIndex) {
+
+	return Vector3(blockSize_ * xIndex + blockSize_ / 2, blockSize_ * (blockNumHeight_ - 1 - yIndex) + blockSize_ / 2, 0.0f);
+
+}
+
+IndexSet MapChip::GetMapChipIndexSetByPosition(const Vector3& position) {
+	IndexSet indexSet;
+	indexSet.x = static_cast<uint32_t>((position.x) / blockSize_);
+	indexSet.y = blockNumHeight_ - 1 - static_cast<uint32_t>(position.y / blockSize_);
+	return indexSet;
+}
+
+Rect MapChip::GetRectByIndex(uint32_t xIndex, uint32_t yIndex) {
+	Vector3 center = GetMapchipPositionByIndex(xIndex, yIndex);
+
+	Rect rect;
+	rect.left = center.x - blockSize_ / 2;
+	rect.right = center.x + blockSize_ / 2;
+	rect.top = center.y + blockSize_ / 2;
+	rect.bottom = center.y - blockSize_ / 2;
+
+	return rect;
 }

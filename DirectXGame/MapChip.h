@@ -8,6 +8,13 @@ enum class MapChipType {
 	wall
 };
 
+struct IndexSet {
+	uint32_t x;
+	uint32_t y;
+};
+
+struct Rect;
+
 class MapChip {
 public:
 
@@ -17,6 +24,14 @@ public:
 	void Initialize(const char* filepath, int blockHandle, Camera* camera);
 	void Update();
 	void Draw();
+
+	MapChipType GetMapchipTypeByIndex(uint32_t xIndex, uint32_t yIndex);
+
+	Vector3 GetMapchipPositionByIndex(uint32_t xIndex, uint32_t yIndex);
+
+	IndexSet GetMapChipIndexSetByPosition(const Vector3& position);
+
+	Rect GetRectByIndex(uint32_t xIndex, uint32_t yIndex);
 
 private:
 

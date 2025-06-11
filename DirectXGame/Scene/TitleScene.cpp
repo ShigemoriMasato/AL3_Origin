@@ -15,7 +15,9 @@ TitleScene::TitleScene(CommonData* commonData) : Scene(commonData) {
 	cameraController_->SetTarget(player_);
 
 	mapChip_ = new MapChip();
-	mapChip_->Initialize("resources/blocks.csv", commonData_->modelHandle_[int(ModelType::Block)], camera_);
+	mapChip_->Initialize("resources/blocks.csv", commonData_->textureHandle_[int(TextureType::block)], camera_);
+
+	player_->SetMapChip(mapChip_);
 
 	debugCamera->Initialize();
 	skydome_ = commonData_->modelHandle_[int(ModelType::skydome)];

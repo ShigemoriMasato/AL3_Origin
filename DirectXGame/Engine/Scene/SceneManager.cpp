@@ -24,7 +24,7 @@ SceneManager::SceneManager(const int32_t kWindowWidth, const int32_t kWindowHeig
 	//↑↑↑↑↑↑↑↑↑↑↑↑↑↑読み込みたい音↑↑↑↑↑↑↑↑↑↑↑↑↑
 
 	//↓↓↓↓↓↓↓↓↓↓↓↓↓↓読み込みたい画像↓↓↓↓↓↓↓↓↓↓↓↓↓
-
+	commonData_->textureHandle_.push_back(myDirectX_->LoadTexture("resources/Block/block.png")); //ブロックテクスチャ
 	//↑↑↑↑↑↑↑↑↑↑↑↑↑↑読み込みたい画像↑↑↑↑↑↑↑↑↑↑↑↑↑
 
 	//↓↓↓↓↓↓↓↓↓↓↓↓↓↓読み込みたいモデル↓↓↓↓↓↓↓↓↓↓↓↓↓
@@ -37,8 +37,7 @@ SceneManager::SceneManager(const int32_t kWindowWidth, const int32_t kWindowHeig
 	//↓↓↓↓↓↓↓↓↓↓↓↓↓↓読み込みたい量↓↓↓↓↓↓↓↓↓↓↓↓↓
 	myDirectX_->CreateDrawResource(MyDirectX::kPrism, 1);
 	myDirectX_->CreateDrawResource(MyDirectX::kSphere, 1);
-	myDirectX_->CreateDrawResource(MyDirectX::kBox, 1);
-	myDirectX_->CreateModelDrawResource(commonData_->modelHandle_[int(ModelType::Block)], 1000);
+	myDirectX_->CreateDrawResource(MyDirectX::kBox, 1000);
 	myDirectX_->CreateModelDrawResource(commonData_->modelHandle_[int(ModelType::skydome)], 1);
 	myDirectX_->CreateModelDrawResource(commonData_->modelHandle_[int(ModelType::player)], 1);
 	myDirectX_->CreateModelDrawResource(commonData_->modelHandle_[int(ModelType::enemy)], 10);
