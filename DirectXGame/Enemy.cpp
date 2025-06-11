@@ -5,8 +5,8 @@
 
 void Enemy::Initialize(Camera* camera, int skull) {
 	camera_ = camera;
-	transform_.scale = {2.0f, 2.0f, 2.0f};
-	transform_.position = { 15.0f, 1.25f, 0.0f };
+	transform_ = {};
+	transform_.position = { 15.0f, 1.5f, 0.0f };
 	transform_.rotation = { 0.0f, -std::numbers::pi_v<float> / 2.0f, 0.0f };
 	skull_ = skull;
 }
