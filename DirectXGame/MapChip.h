@@ -12,7 +12,7 @@ class MapChip {
 public:
 
 	MapChip();
-	~MapChip();
+	~MapChip() = default;
 
 	void Initialize(const char* filepath, int blockHandle, Camera* camera);
 	void Update();

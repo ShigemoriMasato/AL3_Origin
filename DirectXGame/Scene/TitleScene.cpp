@@ -10,6 +10,10 @@ TitleScene::TitleScene(CommonData* commonData) : Scene(commonData) {
 	player_ = new Player();
 	player_->Initialize(camera_, commonData_->modelHandle_[int(ModelType::player)]);
 
+	cameraController_ = new CameraController();
+	cameraController_->Initialize({ 12.0f, 88.0f, 88.0f, 7.2f });
+	cameraController_->SetTarget(player_);
+
 	mapChip_ = new MapChip();
 	mapChip_->Initialize("resources/blocks.csv", commonData_->modelHandle_[int(ModelType::Block)], camera_);
 
@@ -22,28 +26,29 @@ TitleScene::~TitleScene() {
 	delete player_;
 	delete mapChip_;
 	delete debugCamera;
+	delete cameraController_;
 }
 
 Scene* TitleScene::Update() {
+
+	cameraController_->Update();
+
+	if (isDebugCamera) {
+		debugCamera->Update();
+		*camera_ = debugCamera->GetCamera();
+	} else {
+		*camera_ = *cameraController_->GetCamera();
+
+		camera_->SetProjectionMatrix(PerspectiveFovDesc());
+	}
+
+	camera_->MakeMatrix();
 
 	if (Input::GetKeyState(DIK_SPACE) && !Input::GetPreKeyState(DIK_SPACE)) {
 		isDebugCamera = !isDebugCamera; // Toggle camera mode
 	}
 
 	player_->Update();
-
-	if (isDebugCamera) {
-		debugCamera->Update();
-		*camera_ = debugCamera->GetCamera();
-	} else {
-		Transform transform{};
-		transform.position.z = -10.0f;
-
-		camera_->SetTransform(transform);
-		camera_->SetProjectionMatrix(PerspectiveFovDesc());
-	}
-
-	camera_->MakeMatrix();
 
 	return nullptr;
 }

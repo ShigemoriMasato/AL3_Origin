@@ -4,6 +4,7 @@
 #include "../Engine/Camera/DebugCamera.h"
 #include "../Player.h"
 #include "../MapChip.h"
+#include "../CameraController.h"
 
 class TitleScene : public Scene {
 public:
@@ -17,6 +18,7 @@ private:
 
 	Player* player_ = nullptr;
 	MapChip* mapChip_ = nullptr;
+	CameraController* cameraController_;
 
 	int skydome_;
 

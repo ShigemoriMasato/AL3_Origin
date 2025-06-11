@@ -18,8 +18,10 @@ void Player::Initialize(Camera* camera, int player) {
 
 void Player::Update() {
 
-	transform_.position.x += velocity_.x;
-	transform_.position.y += velocity_.y;
+	Move();
+
+	transform_.position += velocity_;
+
 	//振り向き
 	if (turnTimer_ > 0.0f) {
 		turnTimer_ -= 1.0f / 60.0f;

@@ -12,6 +12,13 @@ public:
 	void Update();
 	void Draw() const;
 
+	Transform GetTransform() const {
+		return transform_;
+	}
+	Vector3 GetVelocity() const {
+		return velocity_;
+	}
+
 private:
 
 	void Move();
@@ -22,7 +29,7 @@ private:
 	int model_;
 	const float size = 1.0f;
 
-	Vector2 velocity_;
+	Vector3 velocity_;
 	const float kAttenuation = 0.1f; // 減衰率
 	const float kAcceleration = 0.01f; // 加速度
 	const float kRunSpeedMax = 0.2f; // 最大速度
@@ -34,7 +41,7 @@ private:
 
 	bool onGround_;
 	const float kJumpSpeed = 0.5f; // ジャンプ速度
-	const float kGravityAcceleration = 0.01f; // 重力加速度
+	const float kGravityAcceleration = 0.05f; // 重力加速度
 	const float kFallSpeedMax = 1.0f; // 最大落下速度
 };
 
