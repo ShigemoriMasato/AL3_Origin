@@ -9,6 +9,8 @@ TitleScene::TitleScene(CommonData* commonData) : Scene(commonData) {
 	debugCamera = new DebugCamera();
 	player_ = new Player();
 	player_->Initialize(camera_, commonData_->modelHandle_[int(ModelType::player)]);
+	enemies_.push_back({});
+	enemies_[0].Initialize(camera_, commonData_->modelHandle_[int(ModelType::skull)]);
 
 	cameraController_ = new CameraController();
 	cameraController_->Initialize({ 12.0f, 88.0f, 88.0f, 7.2f });
@@ -52,6 +54,10 @@ Scene* TitleScene::Update() {
 
 	player_->Update();
 
+	for(auto& enemy : enemies_) {
+		enemy.Update();
+	}
+
 	return nullptr;
 }
 
@@ -59,6 +65,10 @@ void TitleScene::Draw() const {
 	Render::DrawModel(skydome_, MakeIdentity4x4(), camera_, { 1.0f, 1.0f, 1.0f, 1.0f, true }, {});
 
 	player_->Draw();
+
+	for (const auto& enemy : enemies_) {
+		enemy.Draw();
+	}
 
 	mapChip_->Draw();
 }

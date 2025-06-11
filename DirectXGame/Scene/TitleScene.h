@@ -5,6 +5,8 @@
 #include "../Player.h"
 #include "../MapChip.h"
 #include "../CameraController.h"
+#include "../Enemy.h"
+#include <vector>
 
 class TitleScene : public Scene {
 public:
@@ -19,6 +21,7 @@ private:
 	Player* player_ = nullptr;
 	MapChip* mapChip_ = nullptr;
 	CameraController* cameraController_;
+	std::vector<Enemy> enemies_;
 
 	int skydome_;
 

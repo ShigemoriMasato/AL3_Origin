@@ -256,7 +256,7 @@ void Player::CheckCollitionRightMapChip(CollisionMapInfo& info) {
 		right.x += size / 2;
 		indexSet = mapChip_->GetMapChipIndexSetByPosition(right + info.movement);
 		Rect rect = mapChip_->GetRectByIndex(indexSet.x, indexSet.y);
-		float buffer = rect.left - transform_.position.x - size / 2;
+		float buffer = rect.left - transform_.position.x - size / 2 - kBufferPosition;
 		info.movement.x = buffer < 0.0f ? 0.0f : buffer;
 		info.isWall = true;
 		velocity_.x = info.movement.x;

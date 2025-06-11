@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <vector>
 #include <string>
+#include <cmath>
 #include "../Data/Vector.h"
 #include "../Data/Matrix.h"
 #include "../Data/Transform.h"

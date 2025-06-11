@@ -1,0 +1,27 @@
+#pragma once
+#include "Engine/Camera/Camera.h"
+#include "Engine/Data/Transform.h"
+
+class Enemy {
+public:
+
+	Enemy() = default;
+	~Enemy() = default;
+
+	void Initialize(Camera* camera, int skullHandle);
+	void Update();
+	void Draw() const;
+
+private:
+
+	Transform transform_;
+	Camera* camera_ = nullptr;
+	int skull_ = -1;
+
+	float rollZTimer_ = 0.0f;
+	const float kRollZTime_ = 1.0f;
+	const float kRollZAngleStart_ = 0.2f;
+	const float kRollZAngleEnd_ = 0.5f;
+
+	const float speed_ = 0.01f;
+};
