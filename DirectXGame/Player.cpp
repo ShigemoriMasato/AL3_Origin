@@ -35,6 +35,12 @@ void Player::Update() {
 
 	SwitchLanding(collitionMapInfo);
 
+	ImGui::Begin("Player");
+	ImGui::Text("Position: (%.2f, %.2f, %.2f)", transform_.position.x, transform_.position.y, transform_.position.z);
+	ImGui::Text("Velocity: (%.2f, %.2f, %.2f)", velocity_.x, velocity_.y, velocity_.z);
+	ImGui::Text("On Ground: %s", onGround_ ? "true" : "false");
+	ImGui::End();
+
 	//振り向き
 	if (turnTimer_ > 0.0f) {
 		turnTimer_ -= 1.0f / 60.0f;
@@ -112,7 +118,7 @@ void Player::Move() {
 
 		//着地判定
 		if (velocity_.y < 0) {
-			if (transform_.position.y <= 1.5f) {
+			if (transform_.position.y <= 1.5f + kBufferPosition) {
 				landing = true;
 			}
 		}
@@ -212,7 +218,7 @@ void Player::CheckCollitionFloorMapChip(CollisionMapInfo& info) {
 		bottom.y -= size / 2;
 		indexSet = mapChip_->GetMapChipIndexSetByPosition(bottom + info.movement);
 		Rect rect = mapChip_->GetRectByIndex(indexSet.x, indexSet.y);
-		float buffer = rect.top - transform_.position.y + size / 2 + kBufferPosition;
+		float buffer = rect.top - transform_.position.y + 0.5f + kBufferPosition;
 		info.movement.y = buffer > 0.0f ? 0.0f : buffer;
 		info.isFloor = true;
 		velocity_.y = info.movement.y;
@@ -308,15 +314,17 @@ void Player::SwitchLanding(const CollisionMapInfo& info) {
 			MapChipType mapChipType;
 			bool hit = false;
 
+			Vector3 bufferPosition = Vector3(0.0f, kBufferPosition + 0.3f, 0.0f);
+
 			//下にブロックがあるかの判定
 			IndexSet indexSet;
-			indexSet = mapChip_->GetMapChipIndexSetByPosition(CornerPosition(transform_.position + info.movement, Corner::kLeftBottom) - Vector3(0.0f, kBufferPosition + 0.1f, 0.0f));
+			indexSet = mapChip_->GetMapChipIndexSetByPosition(CornerPosition(transform_.position - bufferPosition, Corner::kLeftBottom));
 			mapChipType = mapChip_->GetMapchipTypeByIndex(indexSet.x, indexSet.y);
 			if (mapChipType == MapChipType::wall) {
 				hit = true;
 			}
 
-			indexSet = mapChip_->GetMapChipIndexSetByPosition(CornerPosition(transform_.position + info.movement, Corner::kRightBottom) - Vector3(0.0f, kBufferPosition + 0.1f, 0.0f));
+			indexSet = mapChip_->GetMapChipIndexSetByPosition(CornerPosition(transform_.position - bufferPosition, Corner::kRightBottom));
 			mapChipType = mapChip_->GetMapchipTypeByIndex(indexSet.x, indexSet.y);
 			if (mapChipType == MapChipType::wall) {
 				hit = true;

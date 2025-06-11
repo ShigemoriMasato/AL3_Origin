@@ -1518,10 +1518,10 @@ void MyDirectX::DrawBox(Matrix4x4 worldMatrix, Matrix4x4 wvpMatrix, MaterialData
 	indexResource[kBox][drawCount[kBox]]->Map(0, nullptr, reinterpret_cast<void**>(&indexData));
     
     const Vector2 texcoords[4] = {
-        {0.0f, 1.0f},
-        {1.0f, 1.0f},
+        {0.0f, 0.0f},
         {1.0f, 0.0f},
-        {0.0f, 0.0f}
+        {0.0f, 1.0f},
+        {1.0f, 1.0f}
     };
 
     
@@ -1535,10 +1535,10 @@ void MyDirectX::DrawBox(Matrix4x4 worldMatrix, Matrix4x4 wvpMatrix, MaterialData
     };
 
     const Vector2 faceVerts[4] = {
-        {-1, -1}, // 左下
-        { 1, -1}, // 右下
-        { 1,  1}, // 右上
-        {-1,  1}  // 左上
+        {-0.5f, 0.5f}, // 左下
+        {0.5f, 0.5f}, // 右下
+        {-0.5f, -0.5f}, // 右上
+        {0.5f, -0.5f}  // 左上
     };
 
     int index = 0;
@@ -1550,12 +1550,12 @@ void MyDirectX::DrawBox(Matrix4x4 worldMatrix, Matrix4x4 wvpMatrix, MaterialData
             float y = faceVerts[i].y;
 
             switch (face) {
-            case 0: pos = { x, y, -1 }; break; // back
-            case 1: pos = { x, y,  1 }; break; // front
-            case 2: pos = { -1, y, x }; break; // left
-            case 3: pos = { 1, y, -x }; break; // right
-            case 4: pos = { x,  1, -y }; break; // top
-            case 5: pos = { x, -1, y }; break; // bottom
+            case 0: pos = { -x, y, -0.5f }; break; // back
+            case 1: pos = { x, y,  0.5f }; break; // front
+            case 2: pos = { -0.5f, y, x }; break; // left
+            case 3: pos = { 0.5f, y, -x }; break; // right
+            case 4: pos = { -x,  0.5f, y }; break; // top
+            case 5: pos = { x, -0.5f, y }; break; // bottom
             }
 
             vertexData[index++] = {
@@ -1572,12 +1572,12 @@ void MyDirectX::DrawBox(Matrix4x4 worldMatrix, Matrix4x4 wvpMatrix, MaterialData
         // 三角形1
         indexData[idx++] = base + 0;
         indexData[idx++] = base + 2;
-        indexData[idx++] = base + 1;
+        indexData[idx++] = base + 3;
 
         // 三角形2
         indexData[idx++] = base + 0;
         indexData[idx++] = base + 3;
-        indexData[idx++] = base + 2;
+        indexData[idx++] = base + 1;
     }
 
     TramsformMatrixData* wvpData = nullptr;

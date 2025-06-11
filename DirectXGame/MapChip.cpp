@@ -92,10 +92,10 @@ Vector3 MapChip::GetPosByIndex(int x, int y) {
 MapChipType MapChip::GetMapchipTypeByIndex(uint32_t xIndex, uint32_t yIndex) {
 
 	//範囲外処理
-	if (xIndex < 0 || blockNumHeight_ - 1 < xIndex) {
+	if (xIndex < 0 || blockNumWidth_ - 1 < xIndex) {
 		return MapChipType::blank;
 	}
-	if (yIndex < 0 || blockNumWidth_ - 1 < yIndex) {
+	if (yIndex < 0 || blockNumHeight_ - 1 < yIndex) {
 		return MapChipType::blank;
 	}
 
