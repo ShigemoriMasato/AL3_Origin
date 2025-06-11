@@ -14,6 +14,8 @@ public:
 
 private:
 
+	void Move();
+
 	Transform transform_;
 	Camera* camera_ = nullptr;
 

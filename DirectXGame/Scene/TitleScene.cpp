@@ -20,6 +20,8 @@ TitleScene::TitleScene(CommonData* commonData) : Scene(commonData) {
 TitleScene::~TitleScene() {
 	delete camera_;
 	delete player_;
+	delete mapChip_;
+	delete debugCamera;
 }
 
 Scene* TitleScene::Update() {

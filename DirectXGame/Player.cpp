@@ -3,6 +3,7 @@
 #include "Engine/Input/Input.h"
 #include <numbers>
 #include <algorithm>
+#include <memory>
 
 using namespace Matrix;
 
@@ -16,6 +17,28 @@ void Player::Initialize(Camera* camera, int player) {
 }
 
 void Player::Update() {
+
+	transform_.position.x += velocity_.x;
+	transform_.position.y += velocity_.y;
+	//振り向き
+	if (turnTimer_ > 0.0f) {
+		turnTimer_ -= 1.0f / 60.0f;
+
+		float destinationRotationYTable[] = { std::numbers::pi_v<float> * 3.0f / 2.0f, std::numbers::pi_v<float> / 2.0f };
+
+		float destinationRotationY = destinationRotationYTable[isRight_];
+
+		float t = 1.0f - turnTimer_ / kTimeTurn;
+
+		transform_.rotation.y = beginingRotateY_ * (1.0f - t) + destinationRotationY * t;
+	}
+}
+
+void Player::Draw() const {
+	Render::DrawModel(model_, MakeAffineMatrix(transform_), camera_);
+}
+
+void Player::Move() {
 
 	//左右移動
 	if (Input::GetKeyState(DIK_LEFTARROW) || Input::GetKeyState(DIK_RIGHTARROW)) {
@@ -94,22 +117,4 @@ void Player::Update() {
 		}
 	}
 
-	transform_.position.x += velocity_.x;
-	transform_.position.y += velocity_.y;
-	//振り向き
-	if (turnTimer_ > 0.0f) {
-		turnTimer_ -= 1.0f / 60.0f;
-
-		float destinationRotationYTable[] = { std::numbers::pi_v<float> * 3.0f / 2.0f, std::numbers::pi_v<float> / 2.0f };
-
-		float destinationRotationY = destinationRotationYTable[isRight_];
-
-		float t = 1.0f - turnTimer_ / kTimeTurn;
-
-		transform_.rotation.y = beginingRotateY_ * (1.0f - t) + destinationRotationY * t;
-	}
-}
-
-void Player::Draw() const {
-	Render::DrawModel(model_, MakeAffineMatrix(transform_), camera_);
 }
