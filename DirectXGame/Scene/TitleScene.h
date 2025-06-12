@@ -18,6 +18,8 @@ public:
 
 private:
 
+	void CheeckAllCollisions();
+
 	Player* player_ = nullptr;
 	MapChip* mapChip_ = nullptr;
 	CameraController* cameraController_;

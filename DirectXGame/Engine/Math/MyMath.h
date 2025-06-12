@@ -119,3 +119,7 @@ namespace MyMath {
 
 	Vector3 Normalize(Vector3 vec);
 }
+
+namespace Collision {
+	bool AABBtoAABB(AABB a, AABB b);
+}

@@ -2,6 +2,7 @@
 #include "Engine/Render/Render.h"
 #include "Engine/Input/Input.h"
 #include "CameraController.h"
+#include "Enemy.h"
 #include "MapChip.h"
 #include <numbers>
 #include <algorithm>
@@ -57,6 +58,17 @@ void Player::Update() {
 
 void Player::Draw() const {
 	Render::DrawModel(model_, MakeAffineMatrix(transform_), camera_);
+}
+
+AABB Player::GetAABB() {
+	AABB ans;
+	ans.min = transform_.position - Vector3(size / 2.0f, size / 2.0f, size / 2.0f);
+	ans.max = transform_.position + Vector3(size / 2.0f, size / 2.0f, size / 2.0f);
+	return ans;
+}
+
+void Player::OnCollition(Enemy enemy) {
+	velocity_ += Vector3(0.0f, 1.0f, 0.0f);
 }
 
 void Player::Move() {

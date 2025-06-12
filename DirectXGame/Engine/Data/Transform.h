@@ -50,3 +50,8 @@ struct ModelData final {
 	std::vector<VertexData> vertices;
 	ModelMaterial material;
 };
+
+struct AABB final {
+	Vector3 min{ 0.0f, 0.0f, 0.0f };
+	Vector3 max{ 0.0f, 0.0f, 0.0f };
+};

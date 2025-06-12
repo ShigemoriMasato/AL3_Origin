@@ -691,3 +691,9 @@ Matrix4x4 Matrix::MakeAffineMatrix(const Vector3& translation, const Vector3& ro
 Matrix4x4 Matrix::MakeAffineMatrix(Transform transform) {
 	return MakeAffineMatrix(transform.position, transform.rotation, transform.scale);
 }
+
+bool Collision::AABBtoAABB(AABB a, AABB b) {
+	return (a.min.x <= b.max.x && a.max.x >= b.min.x &&
+		a.min.y <= b.max.y && a.max.y >= b.min.y &&
+		a.min.z <= b.max.z && a.max.z >= b.min.z);
+}

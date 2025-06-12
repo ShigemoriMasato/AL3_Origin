@@ -1,6 +1,7 @@
 #include "TitleScene.h"
 #include "../Engine/Input/Input.h"
 #include "../externals/imgui/imgui.h"
+#include "../Engine/Math/MyMath.h"
 
 using namespace Matrix;
 
@@ -9,8 +10,13 @@ TitleScene::TitleScene(CommonData* commonData) : Scene(commonData) {
 	debugCamera = new DebugCamera();
 	player_ = new Player();
 	player_->Initialize(camera_, commonData_->modelHandle_[int(ModelType::player)]);
-	enemies_.push_back({});
-	enemies_[0].Initialize(camera_, commonData_->modelHandle_[int(ModelType::skull)]);
+	Enemy enemy;
+	enemy.Initialize(camera_, commonData_->modelHandle_[int(ModelType::skull)]);
+	enemies_.push_back(enemy);
+	enemy.SetPosition({ 15.0f, 4.5f, 0.0f });
+	enemies_.push_back(enemy);
+	enemy.SetPosition({ 20.0f, 1.5f, 0.0f });
+	enemies_.push_back(enemy);
 
 	cameraController_ = new CameraController();
 	cameraController_->Initialize({ 12.0f, 88.0f, 88.0f, 7.2f });
@@ -58,6 +64,8 @@ Scene* TitleScene::Update() {
 		enemy.Update();
 	}
 
+	CheeckAllCollisions();
+
 	return nullptr;
 }
 
@@ -71,4 +79,22 @@ void TitleScene::Draw() const {
 	}
 
 	mapChip_->Draw();
+}
+
+void TitleScene::CheeckAllCollisions() {
+#pragma region Player to Enemy Collision Check
+
+	AABB player, enemy;
+
+	player = player_->GetAABB();
+
+	for (const auto& e : enemies_) {
+		enemy = e.GetAABB();
+		if (Collision::AABBtoAABB(player, enemy)) {
+			player_->OnCollition(e);
+			break;
+		}
+	}
+
+#pragma endregion
 }

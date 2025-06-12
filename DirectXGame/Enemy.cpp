@@ -27,3 +27,10 @@ void Enemy::Update() {
 void Enemy::Draw() const {
 	Render::DrawModel(skull_, MakeAffineMatrix(transform_), camera_);
 }
+
+AABB Enemy::GetAABB() const {
+	AABB aabb;
+	aabb.min = transform_.position - Vector3(size / 2, size / 2, size / 2);
+	aabb.max = transform_.position + Vector3(size / 2, size / 2, size / 2);
+	return aabb;
+}

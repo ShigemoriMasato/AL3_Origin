@@ -2,6 +2,8 @@
 #include "Engine/Camera/Camera.h"
 #include "Engine/Data/Transform.h"
 
+class Player;
+
 class Enemy {
 public:
 
@@ -12,11 +14,18 @@ public:
 	void Update();
 	void Draw() const;
 
+	void OnCollition(Player* player);
+
+	void SetPosition(const Vector3& position) { transform_.position = position; }
+
+	AABB GetAABB() const;
+
 private:
 
 	Transform transform_;
 	Camera* camera_ = nullptr;
 	int skull_ = -1;
+	const float size = 1.0f;
 
 	float rollZTimer_ = 0.0f;
 	const float kRollZTime_ = 1.0f;

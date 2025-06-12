@@ -3,6 +3,7 @@
 #include "Engine/Data/Transform.h"
 
 class MapChip;
+class Enemy;
 
 enum class LRDirection {
 	Right,
@@ -26,6 +27,8 @@ public:
 	void Update();
 	void Draw() const;
 
+	void OnCollition(Enemy enemy);
+
 	Transform GetTransform() const {
 		return transform_;
 	}
@@ -34,6 +37,8 @@ public:
 	}
 
 	void SetMapChip(MapChip* mapChip) { mapChip_ = mapChip; }
+
+	AABB GetAABB();
 
 private:
 
