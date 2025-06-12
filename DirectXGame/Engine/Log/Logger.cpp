@@ -23,8 +23,6 @@ Logger::Logger(std::string logName) {
 void Logger::Log(const std::string &message) {
 	//ログファイルに出力
 	this->logStream << message << std::endl;
-	//出力ウィンドウ二も出力
-	OutputDebugStringA(message.c_str());
 }
 
 

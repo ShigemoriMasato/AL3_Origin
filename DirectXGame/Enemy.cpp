@@ -3,12 +3,13 @@
 #include "Engine/Render/Render.h"
 #include <numbers>
 
-void Enemy::Initialize(Camera* camera, int skull) {
+void Enemy::Initialize(Camera* camera, int skull, int number) {
 	camera_ = camera;
 	transform_ = {};
 	transform_.position = { 15.0f, 1.5f, 0.0f };
 	transform_.rotation = { 0.0f, -std::numbers::pi_v<float> / 2.0f, 0.0f };
 	skull_ = skull;
+	number_ = number;
 }
 
 void Enemy::Update() {
@@ -33,4 +34,8 @@ AABB Enemy::GetAABB() const {
 	aabb.min = transform_.position - Vector3(size / 2, size / 2, size / 2);
 	aabb.max = transform_.position + Vector3(size / 2, size / 2, size / 2);
 	return aabb;
+}
+
+int Enemy::GetNumber() {
+	return number_;
 }

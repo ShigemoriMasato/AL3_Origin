@@ -39,7 +39,7 @@ SceneManager::SceneManager(const int32_t kWindowWidth, const int32_t kWindowHeig
 	myDirectX_->CreateDrawResource(MyDirectX::kSphere, 1);
 	myDirectX_->CreateDrawResource(MyDirectX::kBox, 1000);
 	myDirectX_->CreateModelDrawResource(commonData_->modelHandle_[int(ModelType::skydome)], 1);
-	myDirectX_->CreateModelDrawResource(commonData_->modelHandle_[int(ModelType::player)], 1);
+	myDirectX_->CreateModelDrawResource(commonData_->modelHandle_[int(ModelType::player)], 100);
 	myDirectX_->CreateModelDrawResource(commonData_->modelHandle_[int(ModelType::skull)], 10);
 	//↑↑↑↑↑↑↑↑↑↑↑↑↑↑読み込みたい量↑↑↑↑↑↑↑↑↑↑↑↑↑
 

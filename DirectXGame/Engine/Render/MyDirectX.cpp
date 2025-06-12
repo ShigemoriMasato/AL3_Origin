@@ -404,6 +404,7 @@ MyDirectX::~MyDirectX() {
 void MyDirectX::Initialize() {
     HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
     assert(SUCCEEDED(hr));
+    frame_ = 0;
 
     wndHandle_ = myWindow_->CreateWindowForApp();
     InitDirectX();
@@ -774,9 +775,17 @@ void MyDirectX::InitDirectX() {
 
     //BlendStateの設定
     D3D12_BLEND_DESC blendDesc{};
-    //全ての色要素を読み込む
-    blendDesc.RenderTarget[0].RenderTargetWriteMask =
-        D3D12_COLOR_WRITE_ENABLE_ALL;
+    blendDesc.AlphaToCoverageEnable = false;
+    blendDesc.IndependentBlendEnable = false;
+    blendDesc.RenderTarget[0].BlendEnable = true;
+	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+    //すべての色を取り込む
+    blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 
     //RasisterzerStateの設定
     D3D12_RASTERIZER_DESC rasterizerDesc{};
@@ -1295,6 +1304,8 @@ void MyDirectX::DrawModel(int modelHandle, Matrix4x4 worldMatrix, Matrix4x4 wvpM
 	commandList->DrawInstanced(UINT(modelList_[modelHandle].vertices.size()), 1, 0, 0);
 
 	drawCount[index]++;
+
+    logger->Log(std::format("{} model drawed", drawCount[index]));
 }
 
 void MyDirectX::DrawSprite(Vector4 lt, Vector4 rt, Vector4 lb, Vector4 rb, Matrix4x4 wvpmat, Matrix4x4 worldmat, MaterialData material, DirectionalLightData dLightData, int textureHandle) {
@@ -1685,10 +1696,14 @@ void MyDirectX::PostDraw() {
 	for (uint32_t& count : drawCount) {
 		count = 0;
 	}
+
+    //フレームの終了をログに通知
+	logger->Log(std::format("{} frame ended", ++frame_));
     
     //次のフレームのためのcommandReset
     commandAllocator->Reset();
     commandList->Reset(commandAllocator.Get(), nullptr);
+
 }
 
 void MyDirectX::Finalize() {

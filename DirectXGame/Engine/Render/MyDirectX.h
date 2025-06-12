@@ -164,5 +164,7 @@ private:
 	std::unordered_map<ID3D12Resource*, D3D12_RESOURCE_STATES> resourceStates;
 
 	bool* isCanDraw_ = nullptr; //描画可能かどうかのフラグ
+
+	uint32_t frame_ = 0; //フレーム数
 };
 

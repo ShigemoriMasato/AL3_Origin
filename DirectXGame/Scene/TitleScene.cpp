@@ -11,11 +11,17 @@ TitleScene::TitleScene(CommonData* commonData) : Scene(commonData) {
 	player_ = new Player();
 	player_->Initialize(camera_, commonData_->modelHandle_[int(ModelType::player)]);
 	Enemy enemy;
-	enemy.Initialize(camera_, commonData_->modelHandle_[int(ModelType::skull)]);
+	enemy.Initialize(camera_, commonData_->modelHandle_[int(ModelType::skull)], 0);
 	enemies_.push_back(enemy);
+
+	logger_ = new Logger("scene");
+
 	enemy.SetPosition({ 15.0f, 4.5f, 0.0f });
+	enemy.SetNumber(1);
 	enemies_.push_back(enemy);
+
 	enemy.SetPosition({ 20.0f, 1.5f, 0.0f });
+	enemy.SetNumber(2);
 	enemies_.push_back(enemy);
 
 	cameraController_ = new CameraController();
@@ -36,6 +42,7 @@ TitleScene::~TitleScene() {
 	delete player_;
 	delete mapChip_;
 	delete debugCamera;
+	delete logger_;
 	delete cameraController_;
 }
 
@@ -54,17 +61,25 @@ Scene* TitleScene::Update() {
 
 	camera_->MakeMatrix();
 
+	logger_->Log("Camera Complete");
+
 	if (Input::GetKeyState(DIK_SPACE) && !Input::GetPreKeyState(DIK_SPACE)) {
 		isDebugCamera = !isDebugCamera; // Toggle camera mode
 	}
 
 	player_->Update();
 
+	logger_->Log("Player Update Complete");
+
 	for(auto& enemy : enemies_) {
 		enemy.Update();
 	}
 
+	logger_->Log("Enemy Update Complete");
+
 	CheeckAllCollisions();
+
+	logger_->Log("Collision Check Complete");
 
 	return nullptr;
 }
@@ -74,11 +89,19 @@ void TitleScene::Draw() const {
 
 	player_->Draw();
 
+	logger_->Log("Player Draw Complete");
+
 	for (const auto& enemy : enemies_) {
 		enemy.Draw();
 	}
 
+	logger_->Log("Enemy Draw Complete");
+
 	mapChip_->Draw();
+
+	logger_->Log("MapChip Draw Complete");
+
+	logger_->Log("Draw Complete\n");
 }
 
 void TitleScene::CheeckAllCollisions() {

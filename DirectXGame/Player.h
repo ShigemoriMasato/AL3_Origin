@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine/Math/MyMath.h"
 #include "Engine/Data/Transform.h"
+#include "DeathParticle.h"
 
 class MapChip;
 class Enemy;
@@ -20,8 +21,8 @@ struct CollisionMapInfo {
 class Player {
 public:
 
-	Player() = default;
-	~Player() = default;
+	Player();
+	~Player();
 
 	void Initialize(Camera* camera, int player);
 	void Update();
@@ -67,6 +68,8 @@ private:
 	Transform transform_;
 	Camera* camera_ = nullptr;
 
+	DeathParticle* deathParticle_ = nullptr;
+
 	int model_;
 	const float size = 0.8f;
 
@@ -79,6 +82,8 @@ private:
 	float turnTimer_ = 0;
 	const float kTimeTurn = 0.2f; // 回転にかかる時間
 	bool isRight_; // 右向きかどうか
+
+	std::vector<int> particleCooltime_;
 
 	bool onGround_;
 	const float kJumpSpeed = 0.8f; // ジャンプ速度

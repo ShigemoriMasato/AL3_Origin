@@ -11,6 +11,14 @@
 
 using namespace Matrix;
 
+Player::Player() {
+	deathParticle_ = new DeathParticle();
+}
+
+Player::~Player() {
+	delete deathParticle_;
+}
+
 void Player::Initialize(Camera* camera, int player) {
 	camera_ = camera;
 	transform_ = Transform();
@@ -18,6 +26,8 @@ void Player::Initialize(Camera* camera, int player) {
 	transform_.rotation.y = std::numbers::pi_v<float> / 2.0f;
 	model_ = player;
 	isRight_ = true;
+
+	deathParticle_->Initialize(camera, player);
 }
 
 void Player::Update() {
@@ -36,11 +46,13 @@ void Player::Update() {
 
 	SwitchLanding(collitionMapInfo);
 
-	ImGui::Begin("Player");
-	ImGui::Text("Position: (%.2f, %.2f, %.2f)", transform_.position.x, transform_.position.y, transform_.position.z);
-	ImGui::Text("Velocity: (%.2f, %.2f, %.2f)", velocity_.x, velocity_.y, velocity_.z);
-	ImGui::Text("On Ground: %s", onGround_ ? "true" : "false");
-	ImGui::End();
+	deathParticle_->Update();
+
+	for (int& time : particleCooltime_) {
+		if (time > 0) { 
+			--time;
+		}
+	}
 
 	//振り向き
 	if (turnTimer_ > 0.0f) {
@@ -58,6 +70,8 @@ void Player::Update() {
 
 void Player::Draw() const {
 	Render::DrawModel(model_, MakeAffineMatrix(transform_), camera_);
+
+	deathParticle_->Draw();
 }
 
 AABB Player::GetAABB() {
@@ -68,7 +82,24 @@ AABB Player::GetAABB() {
 }
 
 void Player::OnCollition(Enemy enemy) {
-	velocity_ += Vector3(0.0f, 1.0f, 0.0f);
+	int number = enemy.GetNumber();
+	bool boot = false;
+
+	if (number >= particleCooltime_.size()) {
+		boot = true;
+
+		while(number >= particleCooltime_.size()) {
+			particleCooltime_.push_back(90);
+		}
+	}
+	else if(particleCooltime_[number] <= 0) {
+		boot = true;
+		particleCooltime_[number] = 90; // 再度発動可能までの時間
+	}
+
+	if (boot) {
+		deathParticle_->Boot(transform_.position);
+	}
 }
 
 void Player::Move() {

@@ -6,6 +6,7 @@
 #include "../MapChip.h"
 #include "../CameraController.h"
 #include "../Enemy.h"
+#include "../Engine/Log/Logger.h"
 #include <vector>
 
 class TitleScene : public Scene {
@@ -24,6 +25,9 @@ private:
 	MapChip* mapChip_ = nullptr;
 	CameraController* cameraController_;
 	std::vector<Enemy> enemies_;
+	DeathParticle* deathParticle_ = nullptr;
+
+	Logger* logger_ = nullptr;
 
 	int skydome_;
 
