@@ -26,52 +26,61 @@ void Player::Initialize(Camera* camera, int player) {
 	transform_.rotation.y = std::numbers::pi_v<float> / 2.0f;
 	model_ = player;
 	isRight_ = true;
+	state_ = PlayerState::Alive;
 
 	deathParticle_->Initialize(camera, player);
 }
 
 void Player::Update() {
 
-	Move();
+	if (state_ == PlayerState::Alive) {
 
-	CollisionMapInfo collitionMapInfo{};
-	collitionMapInfo.movement = velocity_;
+		Move();
 
-	CheckCollitionRoofMapChip(collitionMapInfo);		// 上
-	CheckCollitionFloorMapChip(collitionMapInfo);		// 下
-	CheckCollitionRightMapChip(collitionMapInfo);       // 右
-	CheckCollitionLeftMapChip(collitionMapInfo);		// 左
+		CollisionMapInfo collitionMapInfo{};
+		collitionMapInfo.movement = velocity_;
 
-	transform_.position += velocity_;
+		CheckCollitionRoofMapChip(collitionMapInfo);		// 上
+		CheckCollitionFloorMapChip(collitionMapInfo);		// 下
+		CheckCollitionRightMapChip(collitionMapInfo);       // 右
+		CheckCollitionLeftMapChip(collitionMapInfo);		// 左
 
-	SwitchLanding(collitionMapInfo);
+		transform_.position += velocity_;
 
-	deathParticle_->Update();
+		SwitchLanding(collitionMapInfo);
 
-	for (int& time : particleCooltime_) {
-		if (time > 0) { 
-			--time;
+
+
+		for (int& time : particleCooltime_) {
+			if (time > 0) {
+				--time;
+			}
+		}
+
+		//振り向き
+		if (turnTimer_ > 0.0f) {
+			turnTimer_ -= 1.0f / 60.0f;
+
+			float destinationRotationYTable[] = { std::numbers::pi_v<float> *3.0f / 2.0f, std::numbers::pi_v<float> / 2.0f };
+
+			float destinationRotationY = destinationRotationYTable[isRight_];
+
+			float t = 1.0f - turnTimer_ / kTimeTurn;
+
+			transform_.rotation.y = beginingRotateY_ * (1.0f - t) + destinationRotationY * t;
 		}
 	}
 
-	//振り向き
-	if (turnTimer_ > 0.0f) {
-		turnTimer_ -= 1.0f / 60.0f;
-
-		float destinationRotationYTable[] = { std::numbers::pi_v<float> * 3.0f / 2.0f, std::numbers::pi_v<float> / 2.0f };
-
-		float destinationRotationY = destinationRotationYTable[isRight_];
-
-		float t = 1.0f - turnTimer_ / kTimeTurn;
-
-		transform_.rotation.y = beginingRotateY_ * (1.0f - t) + destinationRotationY * t;
-	}
+	deathParticle_->Update();
 }
 
 void Player::Draw() const {
-	Render::DrawModel(model_, MakeAffineMatrix(transform_), camera_);
-
 	deathParticle_->Draw();
+
+	if (state_ == PlayerState::Death) {
+		return; // 死亡状態では描画しない
+	}
+	Render::DrawModel(model_, MakeAffineMatrix(transform_), camera_);
 }
 
 AABB Player::GetAABB() {
@@ -82,6 +91,8 @@ AABB Player::GetAABB() {
 }
 
 void Player::OnCollition(Enemy enemy) {
+	state_ = PlayerState::Death;
+
 	int number = enemy.GetNumber();
 	bool boot = false;
 

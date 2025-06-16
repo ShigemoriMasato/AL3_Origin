@@ -90,7 +90,7 @@
     <ClCompile Include="Scene\Common\Scene.cpp">
       <Filter>Scene\Common</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\TitleScene.cpp">
+    <ClCompile Include="Scene\GameScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Camera\Camera.cpp">
@@ -138,6 +138,9 @@
     <ClCompile Include="DeathParticle.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Scene\TitleScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -173,7 +176,7 @@
     <ClInclude Include="Scene\Common\Scene.h">
       <Filter>Scene\Common</Filter>
     </ClInclude>
-    <ClInclude Include="Scene\TitleScene.h">
+    <ClInclude Include="Scene\GameScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -229,6 +232,9 @@
     </ClInclude>
     <ClInclude Include="DeathParticle.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\TitleScene.h">
+      <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -18,6 +18,11 @@ struct CollisionMapInfo {
 	Vector3 movement;
 };
 
+enum class PlayerState {
+	Alive,
+	Death,
+};
+
 class Player {
 public:
 
@@ -40,6 +45,10 @@ public:
 	void SetMapChip(MapChip* mapChip) { mapChip_ = mapChip; }
 
 	AABB GetAABB();
+
+	PlayerState GetState() const {
+		return state_;
+	}
 
 private:
 
@@ -69,6 +78,8 @@ private:
 	Camera* camera_ = nullptr;
 
 	DeathParticle* deathParticle_ = nullptr;
+
+	PlayerState state_ = PlayerState::Alive;
 
 	int model_;
 	const float size = 0.8f;
