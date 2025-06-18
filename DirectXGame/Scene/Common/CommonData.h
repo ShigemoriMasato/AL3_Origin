@@ -6,6 +6,7 @@ enum class ModelType {
 	skydome,
 	player,
 	skull,
+	Title,
 
 	ModelCount
 };

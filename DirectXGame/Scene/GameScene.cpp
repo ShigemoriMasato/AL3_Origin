@@ -9,32 +9,10 @@ GameScene::GameScene(CommonData* commonData) : Scene(commonData) {
 	camera_ = new Camera();
 	debugCamera = new DebugCamera();
 	player_ = new Player();
-	player_->Initialize(camera_, commonData_->modelHandle_[int(ModelType::player)]);
-	Enemy enemy;
-	enemy.Initialize(camera_, commonData_->modelHandle_[int(ModelType::skull)], 0);
-	enemies_.push_back(enemy);
-
 	logger_ = new Logger("scene");
-
-	enemy.SetPosition({ 15.0f, 4.5f, 0.0f });
-	enemy.SetNumber(1);
-	enemies_.push_back(enemy);
-
-	enemy.SetPosition({ 20.0f, 1.5f, 0.0f });
-	enemy.SetNumber(2);
-	enemies_.push_back(enemy);
-
 	cameraController_ = new CameraController();
-	cameraController_->Initialize({ 12.0f, 88.0f, 88.0f, 7.2f });
-	cameraController_->SetTarget(player_);
-
 	mapChip_ = new MapChip();
-	mapChip_->Initialize("resources/blocks.csv", commonData_->textureHandle_[int(TextureType::block)], camera_);
-
-	player_->SetMapChip(mapChip_);
-
-	debugCamera->Initialize();
-	skydome_ = commonData_->modelHandle_[int(ModelType::skydome)];
+	fadeInOut_ = new FadeInOut();
 }
 
 GameScene::~GameScene() {
@@ -44,6 +22,37 @@ GameScene::~GameScene() {
 	delete debugCamera;
 	delete logger_;
 	delete cameraController_;
+	delete fadeInOut_;
+}
+
+void GameScene::Initialize() {
+	skydome_ = commonData_->modelHandle_[int(ModelType::skydome)];
+	player_->Initialize(camera_, commonData_->modelHandle_[int(ModelType::player)]);
+
+	enemies_.clear();
+	Enemy enemy;
+	enemy.Initialize(camera_, commonData_->modelHandle_[int(ModelType::skull)], 0);
+	enemies_.push_back(enemy);
+
+	enemy.SetPosition({ 15.0f, 4.5f, 0.0f });
+	enemy.SetNumber(1);
+	enemies_.push_back(enemy);
+
+	enemy.SetPosition({ 20.0f, 1.5f, 0.0f });
+	enemy.SetNumber(2);
+	enemies_.push_back(enemy);
+
+	cameraController_->Initialize({ 12.0f, 88.0f, 88.0f, 7.2f });
+	cameraController_->SetTarget(player_);
+
+	mapChip_->Initialize("resources/blocks.csv", commonData_->textureHandle_[int(TextureType::block)], camera_);
+
+	player_->SetMapChip(mapChip_);
+
+	debugCamera->Initialize();
+
+	fadeInOut_->Initialize(60, camera_);
+	fadeInOut_->SwitchFadeInOut(true); // フェードインを開始
 }
 
 Scene* GameScene::Update() {
@@ -62,6 +71,9 @@ Scene* GameScene::Update() {
 	camera_->MakeMatrix();
 
 	logger_->Log("Camera Complete");
+
+	fadeInOut_->Update();
+
 
 	if (Input::GetKeyState(DIK_SPACE) && !Input::GetPreKeyState(DIK_SPACE)) {
 		isDebugCamera = !isDebugCamera; // Toggle camera mode
@@ -102,6 +114,8 @@ void GameScene::Draw() const {
 	logger_->Log("MapChip Draw Complete");
 
 	logger_->Log("Draw Complete\n");
+
+	fadeInOut_->Draw();
 }
 
 void GameScene::CheeckAllCollisions() {

@@ -7,6 +7,7 @@
 #include "../CameraController.h"
 #include "../Enemy.h"
 #include "../Engine/Log/Logger.h"
+#include "../FadeInOut.h"
 #include <vector>
 
 class GameScene : public Scene {
@@ -14,6 +15,7 @@ public:
 	GameScene(CommonData* commonData);
 	~GameScene();
 
+	void Initialize() override;
 	Scene* Update() override;
 	void Draw() const override;
 
@@ -26,6 +28,7 @@ private:
 	CameraController* cameraController_;
 	std::vector<Enemy> enemies_;
 	DeathParticle* deathParticle_ = nullptr;
+	FadeInOut* fadeInOut_ = nullptr;
 
 	Logger* logger_ = nullptr;
 

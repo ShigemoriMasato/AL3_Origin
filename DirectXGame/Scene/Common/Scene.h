@@ -7,6 +7,7 @@ public:
 	Scene(CommonData* commonData);
 	~Scene() = default;
 
+	virtual void Initialize() = 0;
 	[[nodiscard]]
 	virtual Scene* Update() = 0;
 	virtual void Draw() const = 0;

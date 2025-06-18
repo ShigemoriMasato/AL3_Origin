@@ -487,6 +487,11 @@ ModelMaterial MyDirectX::LoadMaterialTemplateFile(const std::string& directoryPa
         }
     }
 
+    if (material.textureHandle == 0) {
+		//テクスチャが読み込めなかった場合は白い1x1のテクスチャを使う
+		material.textureHandle = 1;
+    }
+
     return material;
 }
 
@@ -1308,7 +1313,7 @@ void MyDirectX::DrawModel(int modelHandle, Matrix4x4 worldMatrix, Matrix4x4 wvpM
     logger->Log(std::format("{} model drawed", drawCount[index]));
 }
 
-void MyDirectX::DrawSprite(Vector4 lt, Vector4 rt, Vector4 lb, Vector4 rb, Matrix4x4 wvpmat, Matrix4x4 worldmat, MaterialData material, DirectionalLightData dLightData, int textureHandle) {
+void MyDirectX::DrawSprite(Vector4 lt, Vector4 rt, Vector4 lb, Vector4 rb, Matrix4x4 worldmat, Matrix4x4 wvpmat, MaterialData material, DirectionalLightData dLightData, int textureHandle) {
     if (drawCount[kSprite] >= vertexResource[kSprite].size()) {
         assert(false && "over drawcount");
     }
@@ -1332,10 +1337,19 @@ void MyDirectX::DrawSprite(Vector4 lt, Vector4 rt, Vector4 lb, Vector4 rb, Matri
     vertexData[3].position = rt;
     vertexData[3].texcoord = { 1.0f, 0.0f };
 
-	TramsformMatrixData* wvpData = nullptr;
-	wvpResource[kSprite][drawCount[kSprite]]->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
-	wvpData->world = worldmat;
-	wvpData->wvp = wvpmat;
+    uint32_t* indexData = nullptr;
+    indexResource[kSprite][drawCount[kSprite]]->Map(0, nullptr, reinterpret_cast<void**>(&indexData));
+    indexData[0] = 0;
+    indexData[1] = 1;
+    indexData[2] = 2;
+    indexData[3] = 1;
+    indexData[4] = 3;
+    indexData[5] = 2;
+
+	TramsformMatrixData* matData = nullptr;
+	wvpResource[kSprite][drawCount[kSprite]]->Map(0, nullptr, reinterpret_cast<void**>(&matData));
+	matData->world = worldmat;
+	matData->wvp = wvpmat;
 
 	MaterialData* materialData = nullptr;
 	materialResource[kSprite][drawCount[kSprite]]->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
@@ -1359,15 +1373,6 @@ void MyDirectX::DrawSprite(Vector4 lt, Vector4 rt, Vector4 lb, Vector4 rb, Matri
 	indexBufferView.BufferLocation = indexResource[kSprite][drawCount[kSprite]]->GetGPUVirtualAddress();
 	indexBufferView.SizeInBytes = sizeof(uint32_t) * 6;
 	indexBufferView.Format = DXGI_FORMAT_R32_UINT;
-
-	uint32_t* indexData = nullptr;
-	indexResource[kSprite][drawCount[kSprite]]->Map(0, nullptr, reinterpret_cast<void**>(&indexData));
-	indexData[0] = 0;
-	indexData[1] = 1;
-	indexData[2] = 2;
-	indexData[3] = 1;
-	indexData[4] = 3;
-	indexData[5] = 2;
 
     //ビューポート
     D3D12_VIEWPORT viewport{};
