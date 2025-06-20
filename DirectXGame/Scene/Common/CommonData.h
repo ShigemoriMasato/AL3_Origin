@@ -13,6 +13,9 @@ enum class ModelType {
 
 enum class TextureType {
 	block,
+	AttackEffect,
+
+	TextureCount
 };
 
 struct CommonData {

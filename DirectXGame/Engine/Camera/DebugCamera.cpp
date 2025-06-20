@@ -48,7 +48,7 @@ void DebugCamera::Update() {
 	//===================
 	//子の移動
 	//===================
-	camera_.SetTransform(MakeRotationMatrix(transform_.rotation) * MakeTranslationMatrix(transform_.position));
+	camera_.SetTransform(transform_);
 	camera_.SetProjectionMatrix(PerspectiveFovDesc());
 }
 

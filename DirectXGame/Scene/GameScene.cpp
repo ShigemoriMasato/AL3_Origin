@@ -27,10 +27,10 @@ GameScene::~GameScene() {
 
 void GameScene::Initialize() {
 	skydome_ = commonData_->modelHandle_[int(ModelType::skydome)];
-	player_->Initialize(camera_, commonData_->modelHandle_[int(ModelType::player)]);
+	player_->Initialize(camera_, commonData_->modelHandle_[int(ModelType::player)], commonData_->textureHandle_[int(TextureType::AttackEffect)]);
 
 	enemies_.clear();
-	Enemy enemy;
+	/*Enemy enemy;
 	enemy.Initialize(camera_, commonData_->modelHandle_[int(ModelType::skull)], 0);
 	enemies_.push_back(enemy);
 
@@ -40,7 +40,7 @@ void GameScene::Initialize() {
 
 	enemy.SetPosition({ 20.0f, 1.5f, 0.0f });
 	enemy.SetNumber(2);
-	enemies_.push_back(enemy);
+	enemies_.push_back(enemy);*/
 
 	cameraController_->Initialize({ 12.0f, 88.0f, 88.0f, 7.2f });
 	cameraController_->SetTarget(player_);
@@ -75,7 +75,7 @@ Scene* GameScene::Update() {
 	fadeInOut_->Update();
 
 
-	if (Input::GetKeyState(DIK_SPACE) && !Input::GetPreKeyState(DIK_SPACE)) {
+	if (Input::GetKeyState(DIK_RETURN) && !Input::GetPreKeyState(DIK_RETURN)) {
 		isDebugCamera = !isDebugCamera; // Toggle camera mode
 	}
 

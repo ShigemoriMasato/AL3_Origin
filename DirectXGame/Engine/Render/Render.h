@@ -17,6 +17,8 @@ public:
 
 	static void DrawSprite(Vector4 lt, Vector4 rt, Vector4 lb, Vector4 rb, Matrix4x4 worldMatrix, Camera* camera, MaterialData material = {1.0f, 1.0f, 1.0f, 1.0f, true}, DirectionalLightData dLightData = {}, int textureHandle = 1);
 
+	static void DrawSprite(Matrix4x4 worldMatrix, Camera* camera, MaterialData material = { 1.0f, 1.0f, 1.0f, 1.0f, true }, DirectionalLightData dLightData = {}, int textureHandle = 1);
+
 	static void DrawPrism(Matrix4x4 worldMatrix, Camera* camera, MaterialData material = {1.0f, 1.0f, 1.0f, 1.0f, true}, DirectionalLightData dLightData = {}, int textureHandle = 1);
 
 	static void DrawBox(Matrix4x4 worldMatrix, Camera* camera, MaterialData material = {1.0f, 1.0f, 1.0f, 1.0f, true}, DirectionalLightData dLightData = {}, int textureHandle = 1);

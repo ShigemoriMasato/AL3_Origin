@@ -10,6 +10,7 @@
 #include <array>
 
 using namespace Matrix;
+using namespace MyMath;
 
 Player::Player() {
 	deathParticle_ = new DeathParticle();
@@ -19,7 +20,7 @@ Player::~Player() {
 	delete deathParticle_;
 }
 
-void Player::Initialize(Camera* camera, int player) {
+void Player::Initialize(Camera* camera, int player, int attackEffect) {
 	camera_ = camera;
 	transform_ = Transform();
 	transform_.position = { 1.5f, 1.5f, 0.0f };
@@ -27,51 +28,66 @@ void Player::Initialize(Camera* camera, int player) {
 	model_ = player;
 	isRight_ = true;
 	state_ = PlayerState::Alive;
+	effectTransform_ = {};
+	attackEffect_ = attackEffect;
 
 	deathParticle_->Initialize(camera, player);
 }
 
 void Player::Update() {
 
-	if (state_ == PlayerState::Alive) {
+	BehaviorUpdate();
 
+	deathParticle_->Update();
+
+	if (state_ != PlayerState::Alive) {
+		return;
+	}
+
+	switch (behavior_) {
+	case Behavior::Root:
 		Move();
+		break;
+	case Behavior::Attack:
+		Attack();
+		break;
+	}
 
-		CollisionMapInfo collitionMapInfo{};
-		collitionMapInfo.movement = velocity_;
+	CollisionMapInfo collitionMapInfo{};
+	collitionMapInfo.movement = velocity_;
 
-		CheckCollitionRoofMapChip(collitionMapInfo);		// 上
-		CheckCollitionFloorMapChip(collitionMapInfo);		// 下
-		CheckCollitionRightMapChip(collitionMapInfo);       // 右
-		CheckCollitionLeftMapChip(collitionMapInfo);		// 左
+	CheckCollitionRoofMapChip(collitionMapInfo);		// 上
+	CheckCollitionFloorMapChip(collitionMapInfo);		// 下
+	CheckCollitionRightMapChip(collitionMapInfo);       // 右
+	CheckCollitionLeftMapChip(collitionMapInfo);		// 左
 
-		transform_.position += velocity_;
+	transform_.position += velocity_;
 
-		SwitchLanding(collitionMapInfo);
+	SwitchLanding(collitionMapInfo);
 
 
-
-		for (int& time : particleCooltime_) {
-			if (time > 0) {
-				--time;
-			}
-		}
-
-		//振り向き
-		if (turnTimer_ > 0.0f) {
-			turnTimer_ -= 1.0f / 60.0f;
-
-			float destinationRotationYTable[] = { std::numbers::pi_v<float> *3.0f / 2.0f, std::numbers::pi_v<float> / 2.0f };
-
-			float destinationRotationY = destinationRotationYTable[isRight_];
-
-			float t = 1.0f - turnTimer_ / kTimeTurn;
-
-			transform_.rotation.y = beginingRotateY_ * (1.0f - t) + destinationRotationY * t;
+	for (int& time : particleCooltime_) {
+		if (time > 0) {
+			--time;
 		}
 	}
 
-	deathParticle_->Update();
+	if (attackCooltime_ > 0) {
+		--attackCooltime_;
+	}
+
+	//振り向き
+	if (turnTimer_ > 0.0f) {
+		turnTimer_ -= 1.0f / 60.0f;
+
+		float destinationRotationYTable[] = { std::numbers::pi_v<float> *3.0f / 2.0f, std::numbers::pi_v<float> / 2.0f };
+
+		float destinationRotationY = destinationRotationYTable[isRight_];
+
+		float t = 1.0f - turnTimer_ / kTimeTurn;
+
+		transform_.rotation.y = beginingRotateY_ * (1.0f - t) + destinationRotationY * t;
+	}
 }
 
 void Player::Draw() const {
@@ -81,6 +97,10 @@ void Player::Draw() const {
 		return; // 死亡状態では描画しない
 	}
 	Render::DrawModel(model_, MakeAffineMatrix(transform_), camera_);
+
+	if (attackphase_ != AttackPhase::Accumulate) {
+		Render::DrawSprite(MakeAffineMatrix(effectTransform_), camera_, {1.0f, 1.0f, 1.0f, 1.0f, true}, {}, attackEffect_);
+	}
 }
 
 AABB Player::GetAABB() {
@@ -192,6 +212,51 @@ void Player::Move() {
 		}
 	}
 
+}
+
+void Player::Attack() {
+	attackTime_++;
+	if (attackTime_ >= kAttackTime) {
+		behaviorRequest_ = Behavior::Root; // 攻撃終了
+		return;
+	}
+
+	float t{};
+
+	switch (attackphase_) {
+	case AttackPhase::Accumulate:
+		
+		t = static_cast<float>(attackTime_) / kAccumulateTime;
+		transform_.scale = EaseOut({ 1.0f, 1.0f, 1.0f }, { 1.0f, 1.3f, 0.3f }, t);
+		if (attackTime_ >= kAccumulateTime) {
+			attackphase_ = AttackPhase::Rush; // 次のフェーズへ
+			velocity_.x += kMaxAttackVelocity * (isRight_ ? 1 : -1);
+		}
+		
+		break;
+
+	case AttackPhase::Rush:
+		t = static_cast<float>(attackTime_ - kAccumulateTime) / kRushTime;
+		transform_.scale = EaseOut({1.0f, 1.3f, 0.3f}, { 1.0f, 0.7f, 1.3f }, t);
+
+		velocity_.x *= (1.0f - kAttenuation); // 減衰
+
+		if (attackTime_ >= kRushTime + kAccumulateTime) {
+			attackphase_ = AttackPhase::Fin; // 次のフェーズへ
+			velocity_ = {};
+		}
+
+		break;
+
+	case AttackPhase::Fin:
+
+		t = static_cast<float>(attackTime_ - kAccumulateTime - kRushTime) / (kAttackTime - kAccumulateTime - kRushTime);
+		transform_.scale = EaseOut({ 1.0f, 0.7f, 1.3f }, { 1.0f, 1.0f, 1.0f }, t);
+
+		break;
+	}
+
+	effectTransform_.position = transform_.position + kEffectOffset * float(isRight_ ? 1 : -1);
 }
 
 void Player::CheckCollitionRoofMapChip(CollisionMapInfo& info) {
@@ -411,4 +476,41 @@ Vector3 Player::CornerPosition(const Vector3& center, Corner corner) {
 	};
 
 	return offsetTable[static_cast<uint32_t>(corner)];
+}
+
+void Player::BehaviorUpdate() {
+	if (state_ != PlayerState::Alive) {
+		return;
+	}
+
+	if (attackCooltime_ > 0) {
+		--attackCooltime_;
+	}
+
+	if (behaviorRequest_ != Behavior::Unknown) {
+		behavior_ = behaviorRequest_;
+		BehaviorInitialize(behaviorRequest_);
+		behaviorRequest_ = Behavior::Unknown;
+	}
+	
+	if (Input::GetKeyState(DIK_SPACE) && !Input::GetPreKeyState(DIK_SPACE) && attackCooltime_ <= 0) {
+		behaviorRequest_ = Behavior::Attack;
+		attackCooltime_ = 30; // 攻撃クールタイム
+	}
+}
+
+void Player::BehaviorInitialize(Behavior bh) {
+	switch (bh) {
+	case Player::Behavior::Root:
+		velocity_ = {};
+		attackphase_ = AttackPhase::Accumulate;
+		break;
+	case Player::Behavior::Attack:
+		attackTime_ = 0;
+		velocity_ = {};
+		attackphase_ = AttackPhase::Accumulate;
+		effectTransform_.scale.x = (isRight_ ? 1.0f : -1.0f);
+		effectTransform_.scale.y = (isRight_ ? 1.0f : -1.0f) * 1.2f;
+		break;
+	}
 }

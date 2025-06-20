@@ -498,6 +498,32 @@ uint32_t MyMath::lerp(uint32_t start, uint32_t end, float t) {
 	return aa | ab | ag | ar;
 }
 
+float MyMath::EaseIn(float a, float b, float t) {
+	return a + (b - a) * t * t * t; // Cubic ease-in
+}
+
+Vector3 MyMath::EaseIn(Vector3 a, Vector3 b, float t) {
+	return Vector3(
+		a.x + (b.x - a.x) * t * t * t,
+		a.y + (b.y - a.y) * t * t * t,
+		a.z + (b.z - a.z) * t * t * t
+	);
+}
+
+float MyMath::EaseOut(float a, float b, float t) {
+	t = 1.0f - t; // Invert t for ease-out
+	return a + (b - a) * (1.0f - t * t * t); // Cubic ease-out
+}
+
+Vector3 MyMath::EaseOut(Vector3 a, Vector3 b, float t) {
+	t = 1.0f - t; // Invert t for ease-out
+	return Vector3(
+		a.x + (b.x - a.x) * (1.0f - t * t * t),
+		a.y + (b.y - a.y) * (1.0f - t * t * t),
+		a.z + (b.z - a.z) * (1.0f - t * t * t)
+	);
+}
+
 Vector3 MyMath::ConvertVector(const Vector4& v) {
 	return Vector3(v.x, v.y, v.z);
 }

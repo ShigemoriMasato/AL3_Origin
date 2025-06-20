@@ -515,12 +515,13 @@ void MyDirectX::InitDirectX() {
     }
 #endif
 
-    //HRESULTはWindows系のエラーコードであり、
+#pragma region dxgiFactory
     //関数が成功したかどうかをSUCCEEDEDマクロで判定する
     HRESULT hr = CreateDXGIFactory(IID_PPV_ARGS(&dxgiFactory));
-    //初期化の根本的な部分でエラーが出た場合はプログラムが間違っているか、
-    //どうにもできない場合が多いのでassertにしておく
     assert(SUCCEEDED(hr));
+#pragma endregion
+
+#pragma region Adapter
     //一番いいアダプタを頼む
     for (UINT i = 0; dxgiFactory->EnumAdapterByGpuPreference(i,
         DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&useAdapter)) != DXGI_ERROR_NOT_FOUND; ++i) {
@@ -542,7 +543,9 @@ void MyDirectX::InitDirectX() {
 
     //適切なアダプタが見つからなかった場合は起動できない
     assert(useAdapter != nullptr);
+#pragma endregion
 
+#pragma region Device
     //機能レベルとログ出力用の文字列
     D3D_FEATURE_LEVEL featureLevels[] =
     {
@@ -567,9 +570,17 @@ void MyDirectX::InitDirectX() {
     assert(device != nullptr);
     logger->Log("Complete create D3D12Device\n");
 
+#pragma endregion
+
+#pragma region DescriptorSizeの取得
+
 	descriptorSizeSRV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
     descriptorSizeRTV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
     descriptorSizeDSV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+
+#pragma endregion
+
+#pragma region DebugLayer
 
 #ifdef _DEBUG
 
@@ -604,9 +615,13 @@ void MyDirectX::InitDirectX() {
 
 #endif
 
+#pragma endregion
+
     //=======================================================
     //          画面を塗りつぶす素材用意
     //=======================================================
+
+#pragma region CommandQueue
 
     D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
     hr = device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&commandQueue));
@@ -614,15 +629,27 @@ void MyDirectX::InitDirectX() {
     assert(SUCCEEDED(hr));
     logger->Log("Complete create CommandQueue\n");
 
+#pragma endregion
+
+#pragma region CommandAllocator
+
     hr = device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator));
     //コマンドアロケータの生成がうまくいかなかったので起動できない
     assert(SUCCEEDED(hr));
     logger->Log("Complete create CommandAllocator\n");
 
+#pragma endregion
+
+#pragma region CommandList
+
     hr = device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator.Get(), nullptr, IID_PPV_ARGS(&commandList));
     //コマンドリストの生成がうまくいかなかったので起動できない
     assert(SUCCEEDED(hr));
     logger->Log("Complete create CommandList\n");
+
+#pragma endregion
+
+#pragma region SwapChain
 
     //スワップチェーンを生成する
     DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
@@ -645,12 +672,9 @@ void MyDirectX::InitDirectX() {
     assert(SUCCEEDED(hr));
     logger->Log("Complete create SwapChain\n");
 
+#pragma endregion
 
-    //ディスクリプタヒープの生成
-    rtvDescriptorHeap = CreateDescriptorHeap(device.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
-    //ディスクリプタヒープの生成がうまくいかなかったので起動できない
-    assert(SUCCEEDED(hr));
-    logger->Log("Complete create DescriptorHeap\n");
+#pragma region SwapChainResource
 
     //SwapChainからResourceを取得する
     hr = swapChain->GetBuffer(0, IID_PPV_ARGS(&swapChainResources[0]));
@@ -659,6 +683,20 @@ void MyDirectX::InitDirectX() {
     hr = swapChain->GetBuffer(1, IID_PPV_ARGS(&swapChainResources[1]));
     //スワップチェーンのリソース取得がうまくいかなかったので起動できない
     assert(SUCCEEDED(hr));
+
+#pragma endregion
+
+#pragma region DescriptorHeap
+
+    //ディスクリプタヒープの生成
+    rtvDescriptorHeap = CreateDescriptorHeap(device.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
+    //ディスクリプタヒープの生成がうまくいかなかったので起動できない
+    assert(SUCCEEDED(hr));
+    logger->Log("Complete create DescriptorHeap\n");
+
+#pragma endregion
+
+#pragma region RenderTargetView
 
     //RTVの設定
     D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
@@ -675,6 +713,10 @@ void MyDirectX::InitDirectX() {
     device->CreateRenderTargetView(swapChainResources[1].Get(), &rtvDesc, rtvHandles[1]);
     logger->Log("Complete create RenderTargetView\n");
 
+#pragma endregion
+
+#pragma region Fence
+
     //初期値0でフェンスを作る
     hr = device->CreateFence(fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
     assert(SUCCEEDED(hr));
@@ -683,25 +725,38 @@ void MyDirectX::InitDirectX() {
     fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
     assert(fenceEvent != nullptr);
 
+#pragma endregion
+
     //=======================================================
 
+#pragma region dxcUtils & dxcCompiler
+
     //dxcCompilerを初期化
-    IDxcUtils* dxcUtils = nullptr;
-    IDxcCompiler3* dxcCompiler = nullptr;
     hr = DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&dxcUtils));
     assert(SUCCEEDED(hr));
     hr = DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&dxcCompiler));
     assert(SUCCEEDED(hr));
 
+#pragma endregion
+
+#pragma region includeHandler
+
     //現時点でincludeはしないが、includeに対応するための設定を行っておく
-    IDxcIncludeHandler* includeHandler = nullptr;
     hr = dxcUtils->CreateDefaultIncludeHandler(&includeHandler);
     assert(SUCCEEDED(hr));
+
+#pragma endregion
+
+#pragma region RootSignature
 
     //RootSignature作成
     D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
     descriptionRootSignature.Flags =
         D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+
+#pragma region RootParameter
+
+#pragma region DescriptorTable
 
     D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
     descriptorRange[0].BaseShaderRegister = 0;
@@ -709,29 +764,48 @@ void MyDirectX::InitDirectX() {
     descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
     descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
+#pragma endregion
+
     //RootParameter作成。複数設定できるので配列
     D3D12_ROOT_PARAMETER rootParameters[4] = {};
+
+#pragma region Material
     rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;        //CBVを使う
     rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;     //PixelShaderで使う
     rootParameters[0].Descriptor.ShaderRegister = 0;                        //レジスタ番号0とバインド
+#pragma endregion
 
+#pragma region Matrix
     rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;        //CBVを使う
     rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;     //VertexShaderで使う
     rootParameters[1].Descriptor.ShaderRegister = 0;                        //レジスタ番号0とバインド
+#pragma endregion
+
+#pragma region Texture
 
     rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;	//テーブルを使う
     rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;	//PixelShaderで使う
     rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRange;	//テーブルの中身
     rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);	//テーブルの数
 
-    //光
+#pragma endregion
+
+#pragma region DirectionalLight
+    
 	rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;	//CBVを使う
 	rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;	//PixelShaderで使う
 	rootParameters[3].Descriptor.ShaderRegister = 1;	//レジスタ番号1とバインド
 
+#pragma endregion
+
+#pragma endregion
 
     descriptionRootSignature.pParameters = rootParameters;                  //ルートパラメータ配列へのポインタ
     descriptionRootSignature.NumParameters = _countof(rootParameters);      //配列の長さ
+
+#pragma endregion
+
+
 
     D3D12_STATIC_SAMPLER_DESC staticSampler[1] = {};
     staticSampler[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;	//フィルタリングの方法
@@ -801,11 +875,11 @@ void MyDirectX::InitDirectX() {
 
     //Shaderをコンパイルする
     vertexShaderBlob = CompileShader(L"./Engine/Shader/Object3D.VS.hlsl",
-        L"vs_6_0", dxcUtils, dxcCompiler, includeHandler, logger);
+        L"vs_6_0", dxcUtils.Get(), dxcCompiler.Get(), includeHandler.Get(), logger);
     assert(vertexShaderBlob != nullptr);
 
     pixelShaderBlob = CompileShader(L"./Engine/Shader/Object3D.PS.hlsl",
-        L"ps_6_0", dxcUtils, dxcCompiler, includeHandler, logger);
+        L"ps_6_0", dxcUtils.Get(), dxcCompiler.Get(), includeHandler.Get(), logger);
     assert(pixelShaderBlob != nullptr);
 
     D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
@@ -906,6 +980,9 @@ void MyDirectX::ClearScreen() {
     commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 }
+
+//todo Drawはここだよ
+#pragma region Draw系関数
 
 void MyDirectX::DrawTriangle(Vector4 left, Vector4 top, Vector4 right, Matrix4x4 worldMatirx, Matrix4x4 wvpMatrix, MaterialData material, DirectionalLightData dLightData, int textureHandle) {
 	if (drawCount[kTriangle] >= vertexResource[kTriangle].size()) {
@@ -1662,6 +1739,8 @@ void MyDirectX::DrawBox(Matrix4x4 worldMatrix, Matrix4x4 wvpMatrix, MaterialData
 
     ++drawCount[kBox];
 }
+
+#pragma endregion
 
 void MyDirectX::PostDraw() {
 

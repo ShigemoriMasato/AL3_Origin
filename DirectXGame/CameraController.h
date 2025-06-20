@@ -38,7 +38,7 @@ private:
 	static inline const float kInterpolationRate = 0.1f;
 	float lerpRatio_ = 0.0f;
 
-	static inline const float kVelocityBias = 20.0f;
+	static inline const float kVelocityBias = 5.0f;
 
 	Camera* camera_ = nullptr;
 	Vector3 camerapos_ = { 0.0f, 0.0f, 0.0f };
