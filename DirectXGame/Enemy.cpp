@@ -50,6 +50,7 @@ void Enemy::BehaviorUpdate() {
 
 	if (behaviorRequest_ != Behavior::Unknown) {
 		BehaviorInitialize(behaviorRequest_);
+		behavior_ = behaviorRequest_;
 		behaviorRequest_ = Behavior::Unknown;
 	}
 }
@@ -61,6 +62,7 @@ void Enemy::BehaviorInitialize(Behavior bh) {
 		break;
 	case Behavior::Death:
 		deathTime_ = 0; // 死亡時間をリセット
+		transform_.rotation.x = kDeathRollX;
 		break;
 	}
 
@@ -87,5 +89,5 @@ void Enemy::Death() {
 		return;
 	}
 
-
+	transform_.rotation.y += kDeathRollY;
 }

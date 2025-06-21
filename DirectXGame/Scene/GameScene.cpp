@@ -23,24 +23,32 @@ GameScene::~GameScene() {
 	delete logger_;
 	delete cameraController_;
 	delete fadeInOut_;
+	while (enemies_.size() > 0) {
+		DestroyEnemy(0); // 既存の敵を削除
+	}
 }
 
 void GameScene::Initialize() {
 	skydome_ = commonData_->modelHandle_[int(ModelType::skydome)];
 	player_->Initialize(camera_, commonData_->modelHandle_[int(ModelType::player)], commonData_->textureHandle_[int(TextureType::AttackEffect)]);
 
-	//enemies_.clear();
-	//Enemy enemy;
-	//enemy.Initialize(camera_, commonData_->modelHandle_[int(ModelType::skull)], 0);
-	//enemies_.push_back(enemy);
+	while(enemies_.size() > 0) {
+		DestroyEnemy(0); // 既存の敵を削除
+	}
 
-	//enemy.SetPosition({ 15.0f, 4.5f, 0.0f });
-	//enemy.SetNumber(1);
-	//enemies_.push_back(enemy);
+	Enemy* enemy = new Enemy();
+	enemy->Initialize(camera_, commonData_->modelHandle_[int(ModelType::skull)], 0);
+	enemies_.push_back(enemy);
 
-	//enemy.SetPosition({ 20.0f, 1.5f, 0.0f });
-	//enemy.SetNumber(2);
-	//enemies_.push_back(enemy);
+	enemy = new Enemy();
+	enemy->Initialize(camera_, commonData_->modelHandle_[int(ModelType::skull)], 0);
+	enemy->SetPosition({ 15.0f, 4.5f, 0.0f });
+	enemies_.push_back(enemy);
+
+	enemy = new Enemy();
+	enemy->Initialize(camera_, commonData_->modelHandle_[int(ModelType::skull)], 0);
+	enemy->SetPosition({ 20.0f, 1.5f, 0.0f });
+	enemies_.push_back(enemy);
 
 	cameraController_->Initialize({ 12.0f, 88.0f, 88.0f, 7.2f });
 	cameraController_->SetTarget(player_);
@@ -56,6 +64,10 @@ void GameScene::Initialize() {
 }
 
 Scene* GameScene::Update() {
+
+	if(Input::GetKeyState(DIK_R) && !Input::GetPreKeyState(DIK_R)) {
+		Initialize(); // Rキーで再初期化
+	}
 
 	cameraController_->Update();
 
@@ -86,7 +98,7 @@ Scene* GameScene::Update() {
 	for (int i = 0; i < enemies_.size(); ++i) {
 		enemies_[i]->Update();
 		if (enemies_[i]->GetIsDeath()) {
-			enemies_.erase(enemies_.begin() + i--);
+			DestroyEnemy(i--);
 		}
 	}
 
@@ -124,6 +136,15 @@ void GameScene::Draw() const {
 	fadeInOut_->Draw();
 }
 
+void GameScene::DestroyEnemy(int index) {
+	if(index < 0 || index >= enemies_.size()) {
+		return; // インデックスが範囲外の場合は何もしない
+	}
+
+	delete enemies_[index];
+	enemies_.erase(enemies_.begin() + index);
+}
+
 void GameScene::CheeckAllCollisions() {
 #pragma region Player to Enemy Collision Check
 
@@ -145,7 +166,7 @@ void GameScene::CheeckAllCollisions() {
 				if (player_->GetIsAttack()) {
 					e->OnCollition(player_);
 				} else {
-					//player_->OnCollition(e);
+					player_->OnCollition(*e);
 				}
 
 				break;

@@ -59,6 +59,9 @@ private:
 	Behavior behaviorRequest_ = Behavior::Unknown;
 
 	int deathTime_ = 0;
+	const int kDeathTime = 60;
+	const float kDeathRollY = 0.1f;
+	const float kDeathRollX = 1.57f;
 	bool isInvisible_ = false; // 無敵状態
 	bool isDeath_ = false;
 };

@@ -23,7 +23,7 @@ private:
 	CommonData* commonData_ = nullptr;
 
 	MyDirectX* myDirectX_ = nullptr;
-	Render* renderer_ = nullptr;
+	Render* render_ = nullptr;
 
 	Input* input_ = nullptr;
 	Sound* sound_ = nullptr;

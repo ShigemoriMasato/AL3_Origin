@@ -21,6 +21,8 @@ public:
 
 private:
 
+	void DestroyEnemy(int index);
+
 	void CheeckAllCollisions();
 
 	Player* player_ = nullptr;

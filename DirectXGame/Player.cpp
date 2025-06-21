@@ -53,17 +53,17 @@ void Player::Update() {
 		break;
 	}
 
-	CollisionMapInfo collitionMapInfo{};
-	collitionMapInfo.movement = velocity_;
+	CollisionMapInfo collisionMapInfo{};
+	collisionMapInfo.movement = velocity_;
 
-	CheckCollitionRoofMapChip(collitionMapInfo);		// 上
-	CheckCollitionFloorMapChip(collitionMapInfo);		// 下
-	CheckCollitionRightMapChip(collitionMapInfo);       // 右
-	CheckCollitionLeftMapChip(collitionMapInfo);		// 左
+	CheckCollitionRoofMapChip(collisionMapInfo);		// 上
+	CheckCollitionFloorMapChip(collisionMapInfo);		// 下
+	CheckCollitionRightMapChip(collisionMapInfo);       // 右
+	CheckCollitionLeftMapChip(collisionMapInfo);		// 左
 
 	transform_.position += velocity_;
 
-	SwitchLanding(collitionMapInfo);
+	SwitchLanding(collisionMapInfo);
 
 
 	for (int& time : particleCooltime_) {
@@ -114,21 +114,15 @@ void Player::OnCollition(Enemy& enemy) {
 	state_ = PlayerState::Death;
 
 	int number = enemy.GetNumber();
-	bool boot = false;
 
 	if (number >= particleCooltime_.size()) {
-		boot = true;
-
 		while(number >= particleCooltime_.size()) {
-			particleCooltime_.push_back(90);
+			particleCooltime_.push_back(0);
 		}
 	}
-	else if(particleCooltime_[number] <= 0) {
-		boot = true;
+	
+	if (particleCooltime_[number] <= 0) {
 		particleCooltime_[number] = 90; // 再度発動可能までの時間
-	}
-
-	if (boot) {
 		deathParticle_->Boot(transform_.position);
 	}
 }

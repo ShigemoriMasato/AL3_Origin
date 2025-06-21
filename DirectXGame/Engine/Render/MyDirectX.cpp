@@ -329,7 +329,6 @@ int MyDirectX::LoadObjFile(const std::string& directoryPath, const std::string& 
         } else if (identifier == "vt") {
             Vector2 texcoord;
             s >> texcoord.x >> texcoord.y; //テクスチャ座標を格納
-            texcoord.x = 1.0f - texcoord.x;
 			texcoord.y = 1.0f - texcoord.y;
             texcoords.push_back(texcoord);
         } else if (identifier == "vn") {

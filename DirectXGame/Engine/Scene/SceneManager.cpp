@@ -12,7 +12,7 @@ SceneManager::SceneManager(const int32_t kWindowWidth, const int32_t kWindowHeig
 
 	myDirectX_ = new MyDirectX(kWindowWidth, kWindowHeight);
 
-	renderer_ = new Render(myDirectX_);
+	render_ = new Render(myDirectX_);
 
 	input_ = new Input(myDirectX_->GetMyWndClass().hInstance, myDirectX_->GetMyHwnd());
 	input_->Initialize();
@@ -53,7 +53,7 @@ SceneManager::SceneManager(const int32_t kWindowWidth, const int32_t kWindowHeig
 SceneManager::~SceneManager() {
 	delete input_;
 	delete myDirectX_;
-	delete renderer_;
+	delete render_;
 	delete scene_;
 	if (nextScene_) {
 		delete nextScene_;
