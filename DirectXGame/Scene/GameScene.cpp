@@ -29,18 +29,18 @@ void GameScene::Initialize() {
 	skydome_ = commonData_->modelHandle_[int(ModelType::skydome)];
 	player_->Initialize(camera_, commonData_->modelHandle_[int(ModelType::player)], commonData_->textureHandle_[int(TextureType::AttackEffect)]);
 
-	enemies_.clear();
-	/*Enemy enemy;
-	enemy.Initialize(camera_, commonData_->modelHandle_[int(ModelType::skull)], 0);
-	enemies_.push_back(enemy);
+	//enemies_.clear();
+	//Enemy enemy;
+	//enemy.Initialize(camera_, commonData_->modelHandle_[int(ModelType::skull)], 0);
+	//enemies_.push_back(enemy);
 
-	enemy.SetPosition({ 15.0f, 4.5f, 0.0f });
-	enemy.SetNumber(1);
-	enemies_.push_back(enemy);
+	//enemy.SetPosition({ 15.0f, 4.5f, 0.0f });
+	//enemy.SetNumber(1);
+	//enemies_.push_back(enemy);
 
-	enemy.SetPosition({ 20.0f, 1.5f, 0.0f });
-	enemy.SetNumber(2);
-	enemies_.push_back(enemy);*/
+	//enemy.SetPosition({ 20.0f, 1.5f, 0.0f });
+	//enemy.SetNumber(2);
+	//enemies_.push_back(enemy);
 
 	cameraController_->Initialize({ 12.0f, 88.0f, 88.0f, 7.2f });
 	cameraController_->SetTarget(player_);
@@ -83,9 +83,15 @@ Scene* GameScene::Update() {
 
 	logger_->Log("Player Update Complete");
 
-	for(auto& enemy : enemies_) {
-		enemy.Update();
+	for (int i = 0; i < enemies_.size(); ++i) {
+		enemies_[i]->Update();
+		if (enemies_[i]->GetIsDeath()) {
+			enemies_.erase(enemies_.begin() + i--);
+		}
 	}
+
+	//GetIsDeath()がtrueの敵を削除(エラーが出るため使用不可)
+	//std::erase_if(enemies_, [](const Enemy& enemy) { return enemy.GetIsDeath(); } );
 
 	logger_->Log("Enemy Update Complete");
 
@@ -103,8 +109,8 @@ void GameScene::Draw() const {
 
 	logger_->Log("Player Draw Complete");
 
-	for (const auto& enemy : enemies_) {
-		enemy.Draw();
+	for (const auto* enemy : enemies_) {
+		enemy->Draw();
 	}
 
 	logger_->Log("Enemy Draw Complete");
@@ -127,10 +133,21 @@ void GameScene::CheeckAllCollisions() {
 
 	//生きてたら
 	if (player_->GetState() == PlayerState::Alive) {
-		for (const auto& e : enemies_) {
-			enemy = e.GetAABB();
+		for (Enemy* e : enemies_) {
+			
+			if (e->GetIsInvisible()) {
+				continue; //当たり判定をとらない敵は処理を飛ばす
+			}
+
+			enemy = e->GetAABB();
 			if (Collision::AABBtoAABB(player, enemy)) {
-				player_->OnCollition(e);
+
+				if (player_->GetIsAttack()) {
+					e->OnCollition(player_);
+				} else {
+					//player_->OnCollition(e);
+				}
+
 				break;
 			}
 		}

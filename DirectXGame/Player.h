@@ -33,21 +33,22 @@ public:
 	void Update();
 	void Draw() const;
 
-	void OnCollition(Enemy enemy);
+	void OnCollition(Enemy& enemy);
 
+	void SetMapChip(MapChip* mapChip) { mapChip_ = mapChip; }
+
+	AABB GetAABB();
+	PlayerState GetState() const {
+		return state_;
+	}
+	bool GetIsAttack() const {
+		return isAttack_;
+	}
 	Transform GetTransform() const {
 		return transform_;
 	}
 	Vector3 GetVelocity() const {
 		return velocity_;
-	}
-
-	void SetMapChip(MapChip* mapChip) { mapChip_ = mapChip; }
-
-	AABB GetAABB();
-
-	PlayerState GetState() const {
-		return state_;
 	}
 
 private:
@@ -136,5 +137,6 @@ private:
 	Transform effectTransform_;
 	const Vector3 kEffectOffset = { 1.2f, 0.0f, 0.0f }; // 攻撃エフェクトのオフセット
 	int attackEffect_ = -1; // 攻撃エフェクトのテクスチャハンドル
+	bool isAttack_ = false;
 };
 

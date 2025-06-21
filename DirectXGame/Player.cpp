@@ -98,7 +98,7 @@ void Player::Draw() const {
 	}
 	Render::DrawModel(model_, MakeAffineMatrix(transform_), camera_);
 
-	if (attackphase_ != AttackPhase::Accumulate) {
+	if (isAttack_) {
 		Render::DrawSprite(MakeAffineMatrix(effectTransform_), camera_, {1.0f, 1.0f, 1.0f, 1.0f, true}, {}, attackEffect_);
 	}
 }
@@ -110,7 +110,7 @@ AABB Player::GetAABB() {
 	return ans;
 }
 
-void Player::OnCollition(Enemy enemy) {
+void Player::OnCollition(Enemy& enemy) {
 	state_ = PlayerState::Death;
 
 	int number = enemy.GetNumber();
@@ -218,6 +218,7 @@ void Player::Attack() {
 	attackTime_++;
 	if (attackTime_ >= kAttackTime) {
 		behaviorRequest_ = Behavior::Root; // 攻撃終了
+		isAttack_ = false;
 		return;
 	}
 
@@ -231,6 +232,7 @@ void Player::Attack() {
 		if (attackTime_ >= kAccumulateTime) {
 			attackphase_ = AttackPhase::Rush; // 次のフェーズへ
 			velocity_.x += kMaxAttackVelocity * (isRight_ ? 1 : -1);
+			isAttack_ = true;
 		}
 		
 		break;
@@ -503,7 +505,6 @@ void Player::BehaviorInitialize(Behavior bh) {
 	switch (bh) {
 	case Player::Behavior::Root:
 		velocity_ = {};
-		attackphase_ = AttackPhase::Accumulate;
 		break;
 	case Player::Behavior::Attack:
 		attackTime_ = 0;

@@ -13,6 +13,60 @@ void Enemy::Initialize(Camera* camera, int skull, int number) {
 }
 
 void Enemy::Update() {
+	BehaviorUpdate();
+
+	switch (behavior_) {
+	case Behavior::Root:
+		Move();
+		break;
+
+	case Behavior::Death:
+		Death();
+		break;
+	}
+}
+
+void Enemy::Draw() const {
+	Render::DrawModel(skull_, MakeAffineMatrix(transform_), camera_);
+}
+
+void Enemy::OnCollition(Player*) {
+	behaviorRequest_ = Behavior::Death; // 死亡処理を要求
+	isInvisible_ = true;
+}
+
+AABB Enemy::GetAABB() const {
+	AABB aabb;
+	aabb.min = transform_.position - Vector3(size / 2, size / 2, size / 2);
+	aabb.max = transform_.position + Vector3(size / 2, size / 2, size / 2);
+	return aabb;
+}
+
+int Enemy::GetNumber() {
+	return number_;
+}
+
+void Enemy::BehaviorUpdate() {
+
+	if (behaviorRequest_ != Behavior::Unknown) {
+		BehaviorInitialize(behaviorRequest_);
+		behaviorRequest_ = Behavior::Unknown;
+	}
+}
+
+void Enemy::BehaviorInitialize(Behavior bh) {
+
+	switch (bh) {
+	case Behavior::Root:
+		break;
+	case Behavior::Death:
+		deathTime_ = 0; // 死亡時間をリセット
+		break;
+	}
+
+}
+
+void Enemy::Move() {
 	rollZTimer_ += 1.0f / 60.0f; // 1フレーム分の時間を加算
 	if (rollZTimer_ > kRollZTime_) {
 		rollZTimer_ -= kRollZTime_; // タイマーをリセット
@@ -25,17 +79,13 @@ void Enemy::Update() {
 	transform_.position.x -= speed_;
 }
 
-void Enemy::Draw() const {
-	Render::DrawModel(skull_, MakeAffineMatrix(transform_), camera_);
-}
+void Enemy::Death() {
+	++deathTime_;
 
-AABB Enemy::GetAABB() const {
-	AABB aabb;
-	aabb.min = transform_.position - Vector3(size / 2, size / 2, size / 2);
-	aabb.max = transform_.position + Vector3(size / 2, size / 2, size / 2);
-	return aabb;
-}
+	if (deathTime_ >= 60) {
+		isDeath_ = true;
+		return;
+	}
 
-int Enemy::GetNumber() {
-	return number_;
+
 }

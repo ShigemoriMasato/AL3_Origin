@@ -26,7 +26,7 @@ private:
 	Player* player_ = nullptr;
 	MapChip* mapChip_ = nullptr;
 	CameraController* cameraController_;
-	std::vector<Enemy> enemies_;
+	std::vector<Enemy*> enemies_;
 	DeathParticle* deathParticle_ = nullptr;
 	FadeInOut* fadeInOut_ = nullptr;
 
