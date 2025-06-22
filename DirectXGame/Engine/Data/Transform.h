@@ -21,8 +21,8 @@ struct VertexData final {
 };
 
 struct MaterialData final {
-	Vector4 color;
-	int32_t enableLighting;
+	Vector4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	int32_t enableLighting = true;
 	float padding[3];
 	Matrix4x4 uvTransform = {
 		1.0f, 0.0f, 0.0f, 0.0f,

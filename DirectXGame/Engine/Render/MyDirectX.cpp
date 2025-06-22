@@ -389,6 +389,7 @@ MyDirectX::MyDirectX(int32_t kWindowWidth, int32_t kWindowHeight) :
     resourceStates[swapChainResources[0].Get()] = D3D12_RESOURCE_STATE_PRESENT;
     resourceStates[swapChainResources[1].Get()] = D3D12_RESOURCE_STATE_PRESENT;
 	myWindow_ = new MyWindow(kWindowWidth, kWindowHeight);
+	pso = new MyPSO();
     Initialize();
 }
 
@@ -398,6 +399,7 @@ MyDirectX::~MyDirectX() {
 	delete isCanDraw_;
     delete logger;
     delete[] clearColor;
+	delete pso;
 }
 
 void MyDirectX::Initialize() {
@@ -897,31 +899,38 @@ void MyDirectX::InitDirectX() {
     depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;	//全ての深度値を使う
     depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;	//深度値の比較方法
 
-    graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc;
-    graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    depthStencilDesc.StencilEnable = FALSE; // ステンシルテストを使わないなら FALSE
+    depthStencilDesc.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK; // デフォルト値
+    depthStencilDesc.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK; // デフォルト値
 
-    graphicsPipelineStateDesc.pRootSignature = rootSignature.Get();
-    graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;
-    graphicsPipelineStateDesc.VS = { vertexShaderBlob->GetBufferPointer(),
-        vertexShaderBlob->GetBufferSize() };
-    graphicsPipelineStateDesc.PS = { pixelShaderBlob->GetBufferPointer(),
-        pixelShaderBlob->GetBufferSize() };
-    graphicsPipelineStateDesc.BlendState = blendDesc;
-    graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;
-    //書き込むRTVの情報
-    graphicsPipelineStateDesc.NumRenderTargets = 1;
-    graphicsPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-    //利用するトロポジ(形状)のタイプ。三角形
-    graphicsPipelineStateDesc.PrimitiveTopologyType =
-        D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-    //どのように画面に色を打ち込むかの設定
-    graphicsPipelineStateDesc.SampleDesc.Count = 1;
-    graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
     //実際に生成
-    graphicsPipelineState = nullptr;
-    hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
-        IID_PPV_ARGS(&graphicsPipelineState));
-    assert(SUCCEEDED(hr));
+    pso->SetPSODesc(depthStencilDesc,
+        DXGI_FORMAT_D24_UNORM_S8_UINT,
+        rootSignature.Get(),
+        inputLayoutDesc,
+        { vertexShaderBlob->GetBufferPointer(), vertexShaderBlob->GetBufferSize() },
+        { pixelShaderBlob->GetBufferPointer(), pixelShaderBlob->GetBufferSize() },
+        blendDesc,
+        rasterizerDesc,
+        1,
+        DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+        D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE,
+        D3D12_DEFAULT_SAMPLE_MASK
+        );
+	pso->SetDevice(device.Get());
+    pso->CreatePSO(int(PSOType::kOpaqueTriangle));
+
+    D3D12_DEPTH_STENCIL_DESC depthStencilDesc2{};
+    depthStencilDesc2.DepthEnable = true;	//深度バッファを使う
+    depthStencilDesc2.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;	//深度地を書き込まない
+    depthStencilDesc2.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;	//深度値の比較方法
+
+    depthStencilDesc2.StencilEnable = FALSE; // ステンシルテストを使わないなら FALSE
+    depthStencilDesc2.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK; // デフォルト値
+    depthStencilDesc2.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK; // デフォルト値
+
+    pso->SetDsvDesc(depthStencilDesc2);
+	pso->CreatePSO(int(PSOType::kTransparentTriangle));
 
     for (int i = 0; i < DrawKindCount; ++i) {
 		vertexResource.push_back({});
@@ -963,7 +972,7 @@ void MyDirectX::ClearScreen() {
     UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
     D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
     //RootSignatureを設定、PSOに設定しているけど別途設定が必要
-    commandList->SetPipelineState(graphicsPipelineState.Get());
+    commandList->SetPipelineState(pso->Get(int(PSOType::kOpaqueTriangle)));
     commandList->SetGraphicsRootSignature(rootSignature.Get());
     commandList->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, &dsvHandle);
 
@@ -1057,11 +1066,16 @@ void MyDirectX::DrawTriangle(Vector4 left, Vector4 top, Vector4 right, Matrix4x4
 
     commandList->RSSetViewports(1, &viewport);
     commandList->RSSetScissorRects(1, &scissorRect);
-    //RootSignatureを設定、PSOに設定しているけど別途設定が必要
-    commandList->SetGraphicsRootSignature(rootSignature.Get());
-    commandList->SetPipelineState(graphicsPipelineState.Get());
-
     commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
+
+    if(material.color.w < 1.0f) {
+        //透明な三角形を描画する場合は、PSOを透明用に変更する
+        SetPSO(PSOType::kTransparentTriangle);
+    } else {
+        //不透明な三角形を描画する場合は、PSOを不透明用に変更する
+        SetPSO(PSOType::kOpaqueTriangle);
+	}
+
     //マテリアルCBufferの場所を設定
     commandList->SetGraphicsRootConstantBufferView(0, materialResource[kTriangle][drawCount[kTriangle]]->GetGPUVirtualAddress());
     //wvp用のCBufferの場所を設定
@@ -1297,6 +1311,14 @@ void MyDirectX::DrawSphere(float radius, Matrix4x4 worldMatrix, Matrix4x4 wvpMat
     commandList->RSSetScissorRects(1, &scissorRect);
     commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
 
+    if (material.color.w < 1.0f) {
+        //透明な三角形を描画する場合は、PSOを透明用に変更する
+        SetPSO(PSOType::kTransparentTriangle);
+    } else {
+        //不透明な三角形を描画する場合は、PSOを不透明用に変更する
+        SetPSO(PSOType::kOpaqueTriangle);
+    }
+
     //マテリアルCBufferの場所を設定
     commandList->SetGraphicsRootConstantBufferView(0, materialResource[kSphere][drawCount[kSphere]]->GetGPUVirtualAddress());
     //wvp用のCBufferの場所を設定
@@ -1371,6 +1393,14 @@ void MyDirectX::DrawModel(int modelHandle, Matrix4x4 worldMatrix, Matrix4x4 wvpM
     commandList->RSSetViewports(1, &viewport);
     commandList->RSSetScissorRects(1, &scissorRect);
     commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
+
+    if (material.color.w < 1.0f) {
+        //透明な三角形を描画する場合は、PSOを透明用に変更する
+        SetPSO(PSOType::kTransparentTriangle);
+    } else {
+        //不透明な三角形を描画する場合は、PSOを不透明用に変更する
+        SetPSO(PSOType::kOpaqueTriangle);
+    }
 
     //マテリアルCBufferの場所を設定
     commandList->SetGraphicsRootConstantBufferView(0, materialResource[index][drawCount[index]]->GetGPUVirtualAddress());
@@ -1472,6 +1502,14 @@ void MyDirectX::DrawSprite(Vector4 lt, Vector4 rt, Vector4 lb, Vector4 rb, Matri
     commandList->RSSetScissorRects(1, &scissorRect);
     commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
 	commandList->IASetIndexBuffer(&indexBufferView);
+
+    if (material.color.w < 1.0f) {
+        //透明な三角形を描画する場合は、PSOを透明用に変更する
+        SetPSO(PSOType::kTransparentTriangle);
+    } else {
+        //不透明な三角形を描画する場合は、PSOを不透明用に変更する
+        SetPSO(PSOType::kOpaqueTriangle);
+    }
 
     //マテリアルCBufferの場所を設定
     commandList->SetGraphicsRootConstantBufferView(0, materialResource[kSprite][drawCount[kSprite]]->GetGPUVirtualAddress());
@@ -1581,6 +1619,14 @@ void MyDirectX::DrawPrism(Matrix4x4 worldMatrix, Matrix4x4 wvpMatrix, MaterialDa
     commandList->RSSetScissorRects(1, &scissorRect);
     commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
     commandList->IASetIndexBuffer(&indexBufferView);
+
+    if (material.color.w < 1.0f) {
+        //透明な三角形を描画する場合は、PSOを透明用に変更する
+        SetPSO(PSOType::kTransparentTriangle);
+    } else {
+        //不透明な三角形を描画する場合は、PSOを不透明用に変更する
+        SetPSO(PSOType::kOpaqueTriangle);
+    }
 
     //マテリアルCBufferの場所を設定
     commandList->SetGraphicsRootConstantBufferView(0, materialResource[kPrism][drawCount[kPrism]]->GetGPUVirtualAddress());
@@ -1723,6 +1769,14 @@ void MyDirectX::DrawBox(Matrix4x4 worldMatrix, Matrix4x4 wvpMatrix, MaterialData
     commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
     commandList->IASetIndexBuffer(&indexBufferView);
 
+    if (material.color.w < 1.0f) {
+        //透明な三角形を描画する場合は、PSOを透明用に変更する
+        SetPSO(PSOType::kTransparentTriangle);
+    } else {
+        //不透明な三角形を描画する場合は、PSOを不透明用に変更する
+        SetPSO(PSOType::kOpaqueTriangle);
+    }
+
     //マテリアルCBufferの場所を設定
     commandList->SetGraphicsRootConstantBufferView(0, materialResource[kBox][drawCount[kBox]]->GetGPUVirtualAddress());
     //wvp用のCBufferの場所を設定
@@ -1838,4 +1892,13 @@ void MyDirectX::InsertBarrier(ID3D12GraphicsCommandList* commandlist, D3D12_RESO
 
     // 状態を更新
     resourceStates[pResource] = stateAfter;
+}
+
+void MyDirectX::SetPSO(PSOType requirePSO) {
+    if (nowPSO == requirePSO) {
+        return;
+    }
+
+	nowPSO = requirePSO;
+    commandList->SetPipelineState(pso->Get(int(requirePSO)));
 }

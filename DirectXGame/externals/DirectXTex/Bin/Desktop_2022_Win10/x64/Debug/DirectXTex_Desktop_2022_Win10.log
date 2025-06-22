@@ -1,23 +1,107 @@
-﻿  DirectXTexUtil.cpp
-  BC.cpp
-  BC4BC5.cpp
-  BC6HBC7.cpp
-  BCDirectCompute.cpp
-  DirectXTexCompress.cpp
-  DirectXTexCompressGPU.cpp
-  DirectXTexConvert.cpp
-  DirectXTexD3D11.cpp
-  DirectXTexD3D12.cpp
-  DirectXTexDDS.cpp
-  DirectXTexFlipRotate.cpp
-  DirectXTexHDR.cpp
-  DirectXTexImage.cpp
-  DirectXTexMipMaps.cpp
-  DirectXTexMisc.cpp
-  DirectXTexNormalMaps.cpp
-  DirectXTexPMAlpha.cpp
-  DirectXTexResize.cpp
-  DirectXTexTGA.cpp
+﻿  DirectXTexD3D12.cpp
+C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(187,34): error C2440: '初期化中': 'D3D12_STENCIL_OP' から 'D3D12_DEPTH_WRITE_MASK' に変換できません。
+  (ソース ファイル '/DirectXTexD3D12.cpp' をコンパイルしています)
+      C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(187,34):
+      列挙型への変換には明示的なキャスト (static_cast、C スタイル キャスト、またはかっこで囲まれた関数スタイル キャスト) が必要です
+  
+C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(187,57): error C2440: '初期化中': 'D3D12_STENCIL_OP' から 'D3D12_COMPARISON_FUNC' に変換できません。
+  (ソース ファイル '/DirectXTexD3D12.cpp' をコンパイルしています)
+      C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(187,57):
+      列挙型への変換には明示的なキャスト (static_cast、C スタイル キャスト、またはかっこで囲まれた関数スタイル キャスト) が必要です
+  
+C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(188,9): error C2679: 二項演算子 '=': 型 'const D3D12_DEPTH_STENCIL_DESC' の右オペランドを扱う演算子が見つかりません (または変換できません)。
+  (ソース ファイル '/DirectXTexD3D12.cpp' をコンパイルしています)
+      C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\d3d12.h(1568,5):
+      'D3D12_DEPTH_STENCILOP_DESC &D3D12_DEPTH_STENCILOP_DESC::operator =(D3D12_DEPTH_STENCILOP_DESC &&)' の可能性があります
+          C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(188,9):
+          'D3D12_DEPTH_STENCILOP_DESC &D3D12_DEPTH_STENCILOP_DESC::operator =(D3D12_DEPTH_STENCILOP_DESC &&)': 引数 2 を 'const D3D12_DEPTH_STENCIL_DESC' から 'D3D12_DEPTH_STENCILOP_DESC &&' へ変換できません。
+              C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(188,21):
+              理由: 'const D3D12_DEPTH_STENCIL_DESC' から 'D3D12_DEPTH_STENCILOP_DESC' へは変換できません。
+              C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(188,21):
+              この変換を実行可能なユーザー定義変換演算子がないか、または演算子を呼び出せません。
+      C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\d3d12.h(1568,5):
+      または 'D3D12_DEPTH_STENCILOP_DESC &D3D12_DEPTH_STENCILOP_DESC::operator =(const D3D12_DEPTH_STENCILOP_DESC &)'
+          C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(188,9):
+          'D3D12_DEPTH_STENCILOP_DESC &D3D12_DEPTH_STENCILOP_DESC::operator =(const D3D12_DEPTH_STENCILOP_DESC &)': 引数 2 を 'const D3D12_DEPTH_STENCIL_DESC' から 'const D3D12_DEPTH_STENCILOP_DESC &' へ変換できません。
+              C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(188,21):
+              理由: 'const D3D12_DEPTH_STENCIL_DESC' から 'const D3D12_DEPTH_STENCILOP_DESC' へは変換できません。
+              C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(188,21):
+              この変換を実行可能なユーザー定義変換演算子がないか、または演算子を呼び出せません。
+      C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(188,9):
+      引数リスト '(D3D12_DEPTH_STENCILOP_DESC, const D3D12_DEPTH_STENCIL_DESC)' を一致させようとしているとき
+  
+C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(189,9): error C2679: 二項演算子 '=': 型 'const D3D12_DEPTH_STENCIL_DESC' の右オペランドを扱う演算子が見つかりません (または変換できません)。
+  (ソース ファイル '/DirectXTexD3D12.cpp' をコンパイルしています)
+      C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\d3d12.h(1568,5):
+      'D3D12_DEPTH_STENCILOP_DESC &D3D12_DEPTH_STENCILOP_DESC::operator =(D3D12_DEPTH_STENCILOP_DESC &&)' の可能性があります
+          C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(189,9):
+          'D3D12_DEPTH_STENCILOP_DESC &D3D12_DEPTH_STENCILOP_DESC::operator =(D3D12_DEPTH_STENCILOP_DESC &&)': 引数 2 を 'const D3D12_DEPTH_STENCIL_DESC' から 'D3D12_DEPTH_STENCILOP_DESC &&' へ変換できません。
+              C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(189,20):
+              理由: 'const D3D12_DEPTH_STENCIL_DESC' から 'D3D12_DEPTH_STENCILOP_DESC' へは変換できません。
+              C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(189,20):
+              この変換を実行可能なユーザー定義変換演算子がないか、または演算子を呼び出せません。
+      C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\d3d12.h(1568,5):
+      または 'D3D12_DEPTH_STENCILOP_DESC &D3D12_DEPTH_STENCILOP_DESC::operator =(const D3D12_DEPTH_STENCILOP_DESC &)'
+          C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(189,9):
+          'D3D12_DEPTH_STENCILOP_DESC &D3D12_DEPTH_STENCILOP_DESC::operator =(const D3D12_DEPTH_STENCILOP_DESC &)': 引数 2 を 'const D3D12_DEPTH_STENCIL_DESC' から 'const D3D12_DEPTH_STENCILOP_DESC &' へ変換できません。
+              C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(189,20):
+              理由: 'const D3D12_DEPTH_STENCIL_DESC' から 'const D3D12_DEPTH_STENCILOP_DESC' へは変換できません。
+              C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(189,20):
+              この変換を実行可能なユーザー定義変換演算子がないか、または演算子を呼び出せません。
+      C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(189,9):
+      引数リスト '(D3D12_DEPTH_STENCILOP_DESC, const D3D12_DEPTH_STENCIL_DESC)' を一致させようとしているとき
+  
+C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(258,34): error C2440: '初期化中': 'D3D12_STENCIL_OP' から 'D3D12_DEPTH_WRITE_MASK' に変換できません。
+  (ソース ファイル '/DirectXTexD3D12.cpp' をコンパイルしています)
+      C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(258,34):
+      列挙型への変換には明示的なキャスト (static_cast、C スタイル キャスト、またはかっこで囲まれた関数スタイル キャスト) が必要です
+  
+C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(258,57): error C2440: '初期化中': 'D3D12_STENCIL_OP' から 'D3D12_COMPARISON_FUNC' に変換できません。
+  (ソース ファイル '/DirectXTexD3D12.cpp' をコンパイルしています)
+      C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(258,57):
+      列挙型への変換には明示的なキャスト (static_cast、C スタイル キャスト、またはかっこで囲まれた関数スタイル キャスト) が必要です
+  
+C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(259,9): error C2679: 二項演算子 '=': 型 'const D3D12_DEPTH_STENCIL_DESC' の右オペランドを扱う演算子が見つかりません (または変換できません)。
+  (ソース ファイル '/DirectXTexD3D12.cpp' をコンパイルしています)
+      C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\d3d12.h(1568,5):
+      'D3D12_DEPTH_STENCILOP_DESC &D3D12_DEPTH_STENCILOP_DESC::operator =(D3D12_DEPTH_STENCILOP_DESC &&)' の可能性があります
+          C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(259,9):
+          'D3D12_DEPTH_STENCILOP_DESC &D3D12_DEPTH_STENCILOP_DESC::operator =(D3D12_DEPTH_STENCILOP_DESC &&)': 引数 2 を 'const D3D12_DEPTH_STENCIL_DESC' から 'D3D12_DEPTH_STENCILOP_DESC &&' へ変換できません。
+              C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(259,21):
+              理由: 'const D3D12_DEPTH_STENCIL_DESC' から 'D3D12_DEPTH_STENCILOP_DESC' へは変換できません。
+              C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(259,21):
+              この変換を実行可能なユーザー定義変換演算子がないか、または演算子を呼び出せません。
+      C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\d3d12.h(1568,5):
+      または 'D3D12_DEPTH_STENCILOP_DESC &D3D12_DEPTH_STENCILOP_DESC::operator =(const D3D12_DEPTH_STENCILOP_DESC &)'
+          C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(259,9):
+          'D3D12_DEPTH_STENCILOP_DESC &D3D12_DEPTH_STENCILOP_DESC::operator =(const D3D12_DEPTH_STENCILOP_DESC &)': 引数 2 を 'const D3D12_DEPTH_STENCIL_DESC' から 'const D3D12_DEPTH_STENCILOP_DESC &' へ変換できません。
+              C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(259,21):
+              理由: 'const D3D12_DEPTH_STENCIL_DESC' から 'const D3D12_DEPTH_STENCILOP_DESC' へは変換できません。
+              C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(259,21):
+              この変換を実行可能なユーザー定義変換演算子がないか、または演算子を呼び出せません。
+      C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(259,9):
+      引数リスト '(D3D12_DEPTH_STENCILOP_DESC, const D3D12_DEPTH_STENCIL_DESC)' を一致させようとしているとき
+  
+C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(260,9): error C2679: 二項演算子 '=': 型 'const D3D12_DEPTH_STENCIL_DESC' の右オペランドを扱う演算子が見つかりません (または変換できません)。
+  (ソース ファイル '/DirectXTexD3D12.cpp' をコンパイルしています)
+      C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\d3d12.h(1568,5):
+      'D3D12_DEPTH_STENCILOP_DESC &D3D12_DEPTH_STENCILOP_DESC::operator =(D3D12_DEPTH_STENCILOP_DESC &&)' の可能性があります
+          C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(260,9):
+          'D3D12_DEPTH_STENCILOP_DESC &D3D12_DEPTH_STENCILOP_DESC::operator =(D3D12_DEPTH_STENCILOP_DESC &&)': 引数 2 を 'const D3D12_DEPTH_STENCIL_DESC' から 'D3D12_DEPTH_STENCILOP_DESC &&' へ変換できません。
+              C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(260,20):
+              理由: 'const D3D12_DEPTH_STENCIL_DESC' から 'D3D12_DEPTH_STENCILOP_DESC' へは変換できません。
+              C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(260,20):
+              この変換を実行可能なユーザー定義変換演算子がないか、または演算子を呼び出せません。
+      C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\d3d12.h(1568,5):
+      または 'D3D12_DEPTH_STENCILOP_DESC &D3D12_DEPTH_STENCILOP_DESC::operator =(const D3D12_DEPTH_STENCILOP_DESC &)'
+          C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(260,9):
+          'D3D12_DEPTH_STENCILOP_DESC &D3D12_DEPTH_STENCILOP_DESC::operator =(const D3D12_DEPTH_STENCILOP_DESC &)': 引数 2 を 'const D3D12_DEPTH_STENCIL_DESC' から 'const D3D12_DEPTH_STENCILOP_DESC &' へ変換できません。
+              C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(260,20):
+              理由: 'const D3D12_DEPTH_STENCIL_DESC' から 'const D3D12_DEPTH_STENCILOP_DESC' へは変換できません。
+              C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(260,20):
+              この変換を実行可能なユーザー定義変換演算子がないか、または演算子を呼び出せません。
+      C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\d3dx12.h(260,9):
+      引数リスト '(D3D12_DEPTH_STENCILOP_DESC, const D3D12_DEPTH_STENCIL_DESC)' を一致させようとしているとき
+  
   DirectXTexWIC.cpp
   コードを生成中...
-  DirectXTex_Desktop_2022_Win10.vcxproj -> C:\Users\vqkx2\source\repos\AL3\AL3_Origin\DirectXGame\externals\DirectXTex\Bin\Desktop_2022_Win10\x64\Debug\DirectXTex.lib

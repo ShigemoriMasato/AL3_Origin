@@ -13,6 +13,7 @@ GameScene::GameScene(CommonData* commonData) : Scene(commonData) {
 	cameraController_ = new CameraController();
 	mapChip_ = new MapChip();
 	fadeInOut_ = new FadeInOut();
+	hitEffect_ = new HitEffect();
 }
 
 GameScene::~GameScene() {
@@ -23,6 +24,7 @@ GameScene::~GameScene() {
 	delete logger_;
 	delete cameraController_;
 	delete fadeInOut_;
+	delete hitEffect_;
 	while (enemies_.size() > 0) {
 		DestroyEnemy(0); // 既存の敵を削除
 	}
@@ -61,6 +63,8 @@ void GameScene::Initialize() {
 
 	fadeInOut_->Initialize(60, camera_);
 	fadeInOut_->SwitchFadeInOut(true); // フェードインを開始
+
+	hitEffect_->Initialize(camera_, commonData_->textureHandle_[int(TextureType::HitEffect)]);
 }
 
 Scene* GameScene::Update() {
@@ -86,6 +90,11 @@ Scene* GameScene::Update() {
 
 	fadeInOut_->Update();
 
+	logger_->Log("FadeInOut Update Complete");
+
+	hitEffect_->Update();
+
+	logger_->Log("HitEffect Update Complete");
 
 	if (Input::GetKeyState(DIK_RETURN) && !Input::GetPreKeyState(DIK_RETURN)) {
 		isDebugCamera = !isDebugCamera; // Toggle camera mode
@@ -134,6 +143,8 @@ void GameScene::Draw() const {
 	logger_->Log("Draw Complete\n");
 
 	fadeInOut_->Draw();
+
+	hitEffect_->Draw();
 }
 
 void GameScene::DestroyEnemy(int index) {
@@ -165,6 +176,7 @@ void GameScene::CheeckAllCollisions() {
 
 				if (player_->GetIsAttack()) {
 					e->OnCollition(player_);
+					hitEffect_->Boot(e->GetPosition());
 				} else {
 					player_->OnCollition(*e);
 				}

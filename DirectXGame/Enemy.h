@@ -27,6 +27,9 @@ public:
 	bool GetIsInvisible() const {
 		return isInvisible_;
 	}
+	Vector3 GetPosition() const {
+		return transform_.position;
+	}
 
 private:
 

@@ -8,6 +8,7 @@
 #include "../Enemy.h"
 #include "../Engine/Log/Logger.h"
 #include "../FadeInOut.h"
+#include "../HitEffect.h"
 #include <vector>
 
 class GameScene : public Scene {
@@ -30,6 +31,7 @@ private:
 	CameraController* cameraController_;
 	std::vector<Enemy*> enemies_;
 	DeathParticle* deathParticle_ = nullptr;
+	HitEffect* hitEffect_ = nullptr;
 	FadeInOut* fadeInOut_ = nullptr;
 
 	Logger* logger_ = nullptr;
