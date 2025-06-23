@@ -11,9 +11,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CameraController.cpp" />
-    <ClCompile Include="DeathParticle.cpp" />
-    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Engine\Camera\Camera.cpp" />
     <ClCompile Include="Engine\Camera\DebugCamera.cpp" />
     <ClCompile Include="Engine\Core\MyPSO.cpp" />
@@ -33,20 +30,12 @@
     <ClCompile Include="externals\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="externals\imgui\imgui_tables.cpp" />
     <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="FadeInOut.cpp" />
-    <ClCompile Include="HitEffect.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="MapChip.cpp" />
-    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Scene\Common\CommonData.cpp" />
     <ClCompile Include="Scene\Common\Scene.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
     <ClCompile Include="Scene\TitleScene.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CameraController.h" />
-    <ClInclude Include="DeathParticle.h" />
-    <ClInclude Include="Enemy.h" />
     <ClInclude Include="Engine\Camera\Camera.h" />
     <ClInclude Include="Engine\Camera\DebugCamera.h" />
     <ClInclude Include="Engine\Core\MyPSO.h" />
@@ -70,10 +59,6 @@
     <ClInclude Include="externals\imgui\imstb_rectpack.h" />
     <ClInclude Include="externals\imgui\imstb_textedit.h" />
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
-    <ClInclude Include="FadeInOut.h" />
-    <ClInclude Include="HitEffect.h" />
-    <ClInclude Include="MapChip.h" />
-    <ClInclude Include="Player.h" />
     <ClInclude Include="Scene\Common\CommonData.h" />
     <ClInclude Include="Scene\Common\Scene.h" />
     <ClInclude Include="Scene\GameScene.h" />
