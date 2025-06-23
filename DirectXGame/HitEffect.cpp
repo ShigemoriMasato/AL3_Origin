@@ -13,56 +13,55 @@ HitEffect::~HitEffect() {
 
 void HitEffect::Initialize(Camera* camera, int textureHandle) {
 	camera_ = camera;
-	textureHandle_ = 0;
+	textureHandle_ = textureHandle;
 }
 
 void HitEffect::Update() {
-	//
-	//for (int i = 0; i < transforms_.size(); ++i) {
+	
+	for (int i = 0; i < transforms_.size(); ++i) {
 
-	//	if (timer_[i] > kLifeTime) {
-	//		transforms_.erase(transforms_.begin() + i);
-	//		timer_.erase(timer_.begin() + i);
-	//		--i;
-	//		continue;
-	//	}
+		if (timer_[i] > kLifeTime) {
+			transforms_.erase(transforms_.begin() + i);
+			timer_.erase(timer_.begin() + i);
+			--i;
+			continue;
+		}
 
-	//	timer_[i] += 1.0f / 60.0f;
+		timer_[i] += 1.0f / 60.0f;
 
-	//	logger_->Log(std::format("timer complete : {}, {}", i, timer_[i]));
+		logger_->Log(std::format("timer complete : {}, {}", i, timer_[i]));
 
-	//	for (int j = 0; j < transforms_[i].size(); ++j) {
+		for (int j = 0; j < transforms_[i].size(); ++j) {
 
-	//		float t = 1.0f;
+			float t = 1.0f;
 
-	//		//scaleの大きさの倍率
-	//		if (timer_[i] < kScaleTime) {
-	//			t = float(timer_[i]) / kScaleTime;
-	//		} else if (timer_[i] > kLifeTime - kScaleTime) {
-	//			t = float(kLifeTime - timer_[i]) / kScaleTime;
-	//		}
+			//scaleの大きさの倍率
+			if (timer_[i] < kScaleTime) {
+				t = float(timer_[i]) / kScaleTime;
+			} else if (timer_[i] > kLifeTime - kScaleTime) {
+				t = float(kLifeTime - timer_[i]) / kScaleTime;
+			}
 
-	//		if (!j) {
-	//			
-	//			transforms_[i][j].scale = Vector3(1.3f, 1.3f, 1.3f) * t;
+			if (!j) {
+				
+				transforms_[i][j].scale = Vector3(1.5f, 1.5f, 1.0f) * t;
 
-	//		} else {
+			} else {
 
-	//			transforms_[i][j].scale = Vector3(0.3f, 1.7f, 1.3f) * t;
+				transforms_[i][j].scale = Vector3(0.3f, 2.0f, 1.0f) * t;
 
-	//		}
+			}
 
-	//		logger_->Log(std::format("Update Complete : {}-{}", i, j));
+			logger_->Log(std::format("Update Complete : {}-{}", i, j));
 
-	//	}
-	//}
-
+		}
+	}
 }
 
 void HitEffect::Draw() const {
 	for(const auto& transform : transforms_) {
 		for (const auto& t : transform) {
-			Render::DrawSprite(MakeAffineMatrix(t), camera_, {}, {}, textureHandle_);
+			Render::DrawSprite(MakeAffineMatrix(t), camera_, {1.0f, 1.0f, 1.0f, 0.99f}, {}, textureHandle_);
 		}
 	}
 }
@@ -70,7 +69,7 @@ void HitEffect::Draw() const {
 void HitEffect::Boot(Vector3 pos) {
 	std::vector<Transform> transform;
 	Transform t{};
-	t.scale = { 2.0f, 2.0f, 2.0f };
+	t.scale = { 0.0f, 0.0f, 1.0f };
 
 	t.position = pos;
 	transform.push_back(t);

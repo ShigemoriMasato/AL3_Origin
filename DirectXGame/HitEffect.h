@@ -26,6 +26,6 @@ private:
 
 	int textureHandle_ = -1;
 
-	const float kLifeTime = 10.0f;
-	const float kScaleTime = 0.5f;
+	const float kLifeTime = 1.0f;
+	const float kScaleTime = 0.2f;
 };

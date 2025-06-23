@@ -183,7 +183,7 @@ struct CD3DX12_DEPTH_STENCIL_DESC : public D3D12_DEPTH_STENCIL_DESC
         StencilEnable = FALSE;
         StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
         StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
-        const D3D12_DEPTH_STENCIL_DESC defaultStencilOp =
+        const D3D12_DEPTH_STENCILOP_DESC defaultStencilOp =
         { D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_COMPARISON_FUNC_ALWAYS };
         FrontFace = defaultStencilOp;
         BackFace = defaultStencilOp;
@@ -254,7 +254,7 @@ struct CD3DX12_DEPTH_STENCIL_DESC1 : public D3D12_DEPTH_STENCIL_DESC1
         StencilEnable = FALSE;
         StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
         StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
-        const D3D12_DEPTH_STENCIL_DESC defaultStencilOp =
+        const D3D12_DEPTH_STENCILOP_DESC defaultStencilOp =
         { D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_COMPARISON_FUNC_ALWAYS };
         FrontFace = defaultStencilOp;
         BackFace = defaultStencilOp;

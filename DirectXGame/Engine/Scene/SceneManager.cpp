@@ -3,6 +3,8 @@
 #include "../../Scene/TitleScene.h"
 #include "../Input/Input.h"
 #include "../Sound/Sound.h"
+#include <random>
+#include <time.h>
 
 SceneManager::SceneManager(const int32_t kWindowWidth, const int32_t kWindowHeight) {
 
@@ -18,6 +20,8 @@ SceneManager::SceneManager(const int32_t kWindowWidth, const int32_t kWindowHeig
 	input_->Initialize();
 
 	sound_ = new Sound();
+
+	std::srand(uint32_t(time(nullptr)));
 
 	//↓↓↓↓↓↓↓↓↓↓↓↓↓↓読み込みたい音↓↓↓↓↓↓↓↓↓↓↓↓↓
 

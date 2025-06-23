@@ -106,6 +106,8 @@ void MyPSO::CreatePSO(int index) {
 	ID3D12PipelineState* pso = nullptr;
 	HRESULT hr = device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&pso));
 	assert(SUCCEEDED(hr));
+
+	this->psoList[index] = (pso);
 }
 
 void MyPSO::SetDevice(ID3D12Device* device) {
