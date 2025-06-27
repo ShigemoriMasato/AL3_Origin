@@ -18,10 +18,10 @@ private:
 	Camera camera_;
 
 	//カメラの親座標
-	Vector3 center_;
+	Vector3 center_{};
 
 	//カメラの球面座標系
-	Vector3 spherical_;
+	Vector3 spherical_{};
 
 	//親からの距離
 	float distance_ = -10.0f;

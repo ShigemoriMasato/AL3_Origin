@@ -1,9 +1,10 @@
 #include "Enemy.h"
 #include <numbers>
 
-Enemy::Enemy(Camera* camera, int modelHandle) : Object(camera, ShapeType::Model) {
+Enemy::Enemy(Camera* camera, int modelHandle, Object* target) : Object(camera, ShapeType::Model),
+timecall_(new TimeCall()),
+target_(target) {
 	handle_ = modelHandle;
-	
 }
 
 void Enemy::Initialize() {
@@ -11,25 +12,14 @@ void Enemy::Initialize() {
 	transform_.rotation.y = std::numbers::pi_v<float>;
 	state_ = std::make_shared<EnemyStateApploach>(this);
 	fireCooltime_ = 0;
+	timecall_->Register(std::bind(&Enemy::Fire, this), 20, true);
+	timecall_->Register(std::bind(&Enemy::Death, this), 200, false);
 }
 
 void Enemy::Update() {
 	state_->Execute();
 
-	frame_++;
-	
-	if (frame_ > 200) {
-		isAlive_ = false;
-	}
-
-	--fireCooltime_;
-	if (fireCooltime_ < 0) {
-		fireCooltime_ = fireCooltimeMax;
-		// 弾を発射
-		EnemyBullet bullet = EnemyBullet(camera_, transform_.position, transform_.rotation);
-		bullet.Initialize();
-		bullets_.push_back(bullet);
-	}
+	timecall_->Update();
 
 	for (int i = 0; i < bullets_.size(); ++i) {
 		bullets_[i].Update();
@@ -45,6 +35,12 @@ void Enemy::Draws() {
 	for (const auto& bullet : bullets_) {
 		bullet.Draw();
 	}
+}
+
+void Enemy::Fire() {
+	EnemyBullet bullet = EnemyBullet(camera_, transform_.position, target_);
+	bullet.Initialize();
+	bullets_.push_back(bullet);
 }
 
 std::shared_ptr<EnemyState> Enemy::Down() {

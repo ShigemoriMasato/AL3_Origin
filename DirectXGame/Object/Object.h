@@ -38,6 +38,10 @@ public:
 		this->rb = rb;
 	}
 
+	Transform GetTransform() const {
+		return transform_;
+	}
+
 protected:
 
 	Transform transform_{};

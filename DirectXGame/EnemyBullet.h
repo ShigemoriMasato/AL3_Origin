@@ -4,7 +4,7 @@
 class EnemyBullet : public Object {
 public:
 
-	EnemyBullet(Camera* camera, Vector3 pos, Vector3 rotate);
+	EnemyBullet(Camera* camera, Vector3 pos, Object* target);
 	~EnemyBullet() = default;
 	void Initialize() override;
 	void Update() override;

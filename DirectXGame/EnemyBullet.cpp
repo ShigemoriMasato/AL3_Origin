@@ -4,12 +4,13 @@
 
 using namespace Matrix;
 
-EnemyBullet::EnemyBullet(Camera* camera, Vector3 pos, Vector3 rotate) : Object(camera, ShapeType::Cube) {
+EnemyBullet::EnemyBullet(Camera* camera, Vector3 pos, Object* target) : Object(camera, ShapeType::Cube) {
 	handle_ = 1;
 	transform_.position = pos;
 	velocity_ = {};
-	rotate.x -= std::numbers::pi_v<float>; // Y軸回転を反転
-	direction_ = Vector3(0.0f, 0.0f, -1.0f) * MakeRotationMatrix(rotate);
+	Vector3 targetpos = target->GetTransform().position;
+	direction_ = targetpos - transform_.position;
+	direction_ = direction_.Normalize();
 	color = 0xffff;//青
 }
 

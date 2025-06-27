@@ -1,6 +1,7 @@
 #pragma once
 #include "Object/Object.h"
 #include "EnemyBullet.h"
+#include "TimeCall.h"
 #include <memory>
 
 class Enemy;
@@ -41,7 +42,7 @@ private:
 
 class Enemy : public Object {
 public:
-	Enemy(Camera* camera, int modelHandle);
+	Enemy(Camera* camera, int modelHandle, Object* target);
 	~Enemy() = default;
 
 	void Initialize() override;
@@ -61,6 +62,11 @@ public:
 	void Draws();
 
 private:
+
+	void Fire();
+
+	void Death() { isAlive_ = false; }
+
 	using StateFunction = void (Enemy::*)(); // メンバ関数ポインタ型を定義
 	static StateFunction stateFunc[];       // メンバ関数ポインタの配列を宣言
 
@@ -74,5 +80,10 @@ private:
 	std::vector<EnemyBullet> bullets_;
 	int fireCooltime_ = 0;
 	static inline const int fireCooltimeMax = 60;
+
+	//TimeCall
+	TimeCall* timecall_ = nullptr;
+
+	Object* target_ = nullptr; // プレイヤーへの参照
 };
 
