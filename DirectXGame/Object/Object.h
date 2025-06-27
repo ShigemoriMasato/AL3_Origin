@@ -24,10 +24,6 @@ public:
 	// 描画
 	virtual void Draw() const;
 
-	void SetCamera(Camera* camera) {
-		camera_ = camera;
-	}
-
 	/// <summary>
 	/// 三角形、スプライト、球のときのみ適用
 	/// </summary>
@@ -48,9 +44,10 @@ protected:
 	uint32_t color = 0xffffffff;
 	int handle_ = 1;
 
+	Camera* camera_ = nullptr;
+
 private:
 
-	Camera* camera_ = nullptr;
 	ShapeType type_ = ShapeType::Count;
 
 	Vector3 lt = { -0.5f, 0.5f, 0.0f };

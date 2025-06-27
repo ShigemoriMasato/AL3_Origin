@@ -47,5 +47,5 @@ Scene* GameScene::Update() {
 }
 
 void GameScene::Draw() const {
-	player_->Draw();
+	player_->Draws();
 }

@@ -39,4 +39,23 @@ void Player::Update() {
 	transform_.position.x = std::clamp(transform_.position.x, -7.2f, 7.2f);
 	transform_.position.y = std::clamp(transform_.position.y, -4.0f, 4.0f);
 
+	if (Input::GetKeyState(DIK_SPACE) && !Input::GetPreKeyState(DIK_SPACE)) {
+		// プレイヤーの弾を発射
+		PlayerBullet bullet = PlayerBullet(camera_, transform_.position);
+		bullet.Initialize();
+		bullets_.push_back(bullet);
+	}
+
+	for (auto& bullet : bullets_) {
+		bullet.Update();
+	}
+
+}
+
+void Player::Draws() const {
+	Draw();
+
+	for (const auto& bullet : bullets_) {
+		bullet.Draw();
+	}
 }
