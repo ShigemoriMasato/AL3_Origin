@@ -3,6 +3,7 @@
 #include "Common/CommonData.h"
 #include "../Engine/Camera/DebugCamera.h"
 #include "../Player.h"
+#include "../Enemy.h"
 
 class GameScene : public Scene {
 public:
@@ -21,4 +22,6 @@ private:
 	bool isDebugCamera = false;
 
 	std::shared_ptr<Player> player_ = nullptr;
+
+	std::vector<Enemy> enemies_;
 };

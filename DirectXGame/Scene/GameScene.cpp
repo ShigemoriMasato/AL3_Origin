@@ -22,6 +22,11 @@ void GameScene::Initialize() {
 	cameraTransform_ = {};
 	cameraTransform_.position = { 0.0f, 0.0f, -20.0f };
 	camera_->SetProjectionMatrix(PerspectiveFovDesc());
+
+	enemies_.clear();
+	Enemy enemy{camera_, commonData_->modelHandle_[int(ModelType::Enemy)]};
+	enemy.Initialize();
+	enemies_.push_back(enemy);
 }
 
 Scene* GameScene::Update() {
@@ -43,9 +48,24 @@ Scene* GameScene::Update() {
 
 	player_->Update();
 
+	for (int i = 0; i < enemies_.size(); ++i) {
+		enemies_[i].Update();
+		if (!enemies_[i].GetIsAlive()) {
+			enemies_.erase(enemies_.begin() + i);
+			//新しい敵を生成
+			Enemy enemy{ camera_, commonData_->modelHandle_[int(ModelType::Enemy)] };
+			enemy.Initialize();
+			enemies_.push_back(enemy);
+		}
+	}
+
 	return nullptr;
 }
 
 void GameScene::Draw() const {
 	player_->Draws();
+	
+	for (const auto& enemy : enemies_) {
+		enemy.Draw();
+	}
 }
