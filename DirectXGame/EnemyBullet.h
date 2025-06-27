@@ -14,7 +14,7 @@ private:
 
 	Vector3 velocity_;
 	Vector3 direction_;
-	static inline const float speed = 0.2f;
+	static inline const float speed = 0.1f;
 	bool isDelete_ = false;
 
 	int frame_ = 0;

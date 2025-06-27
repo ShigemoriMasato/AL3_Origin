@@ -8,12 +8,12 @@ target_(target) {
 }
 
 void Enemy::Initialize() {
-	transform_.position = { 1.0f, 0.0f, 10.0f };
+	transform_.position = { 1.0f, 0.0f, 5.0f };
 	transform_.rotation.y = std::numbers::pi_v<float>;
 	state_ = std::make_shared<EnemyStateApploach>(this);
 	fireCooltime_ = 0;
-	timecall_->Register(std::bind(&Enemy::Fire, this), 20, true);
-	timecall_->Register(std::bind(&Enemy::Death, this), 200, false);
+	timecall_->Register(std::bind(&Enemy::Fire, this), 30, true);
+	timecall_->Register(std::bind(&Enemy::Death, this), 400, false);
 }
 
 void Enemy::Update() {

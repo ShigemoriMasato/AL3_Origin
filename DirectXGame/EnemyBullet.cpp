@@ -15,8 +15,13 @@ EnemyBullet::EnemyBullet(Camera* camera, Vector3 pos, Object* target) : Object(c
 }
 
 void EnemyBullet::Initialize() {
-	transform_.scale = { 0.3f, 0.3f, 0.3f };
+	transform_.scale = { 0.2f, 0.3f, 1.0f };
 	velocity_ = direction_ * speed;
+	//targetへ-Zが向くように調整
+	float yaw = std::atan2(direction_.x, direction_.z);
+	float pitch = std::atan2(-direction_.y, std::sqrt(direction_.x * direction_.x + direction_.z * direction_.z));
+
+	transform_.rotation = { pitch, yaw, 0.0f };
 }
 
 void EnemyBullet::Update() {
