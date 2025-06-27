@@ -57,7 +57,7 @@ void Player::Update() {
 	for (int i = 0; i < bullets_.size(); ++i) {
 		bullets_[i].Update();
 		if (bullets_[i].GetIsDelete()) {
-			bullets_.erase(bullets_.begin() + i);
+			bullets_.erase(bullets_.begin() + i--);
 		}
 	}
 

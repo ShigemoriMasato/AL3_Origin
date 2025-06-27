@@ -7,21 +7,43 @@ Enemy::Enemy(Camera* camera, int modelHandle) : Object(camera, ShapeType::Model)
 }
 
 void Enemy::Initialize() {
-	transform_.position = { 0.0f, 0.0f, 10.0f };
+	transform_.position = { 1.0f, 0.0f, 10.0f };
 	transform_.rotation.y = std::numbers::pi_v<float>;
 	state_ = std::make_shared<EnemyStateApploach>(this);
+	fireCooltime_ = 0;
 }
 
 void Enemy::Update() {
 	state_->Execute();
 
 	frame_++;
-	if (frame_ == 60) {
-		state_ = Down();
-	}
 	
-	if (frame_ > 120) {
+	if (frame_ > 200) {
 		isAlive_ = false;
+	}
+
+	--fireCooltime_;
+	if (fireCooltime_ < 0) {
+		fireCooltime_ = fireCooltimeMax;
+		// 弾を発射
+		EnemyBullet bullet = EnemyBullet(camera_, transform_.position, transform_.rotation);
+		bullet.Initialize();
+		bullets_.push_back(bullet);
+	}
+
+	for (int i = 0; i < bullets_.size(); ++i) {
+		bullets_[i].Update();
+		if (bullets_[i].GetIsDelete()) {
+			bullets_.erase(bullets_.begin() + i--);
+		}
+	}
+}
+
+void Enemy::Draws() {
+	Draw();
+
+	for (const auto& bullet : bullets_) {
+		bullet.Draw();
 	}
 }
 

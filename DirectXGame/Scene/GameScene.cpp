@@ -66,6 +66,6 @@ void GameScene::Draw() const {
 	player_->Draws();
 	
 	for (const auto& enemy : enemies_) {
-		enemy->Draw();
+		enemy->Draws();
 	}
 }

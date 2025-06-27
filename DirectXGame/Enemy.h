@@ -1,5 +1,6 @@
 #pragma once
 #include "Object/Object.h"
+#include "EnemyBullet.h"
 #include <memory>
 
 class Enemy;
@@ -54,6 +55,11 @@ public:
 
 	void MovePosition(Vector3 velocity);
 
+	/// <summary>
+	/// EnemyBulletとEnemyのDraw
+	/// </summary>
+	void Draws();
+
 private:
 	using StateFunction = void (Enemy::*)(); // メンバ関数ポインタ型を定義
 	static StateFunction stateFunc[];       // メンバ関数ポインタの配列を宣言
@@ -63,5 +69,10 @@ private:
 	bool isAlive_ = true;
 
 	int frame_ = 0;
+
+	//弾
+	std::vector<EnemyBullet> bullets_;
+	int fireCooltime_ = 0;
+	static inline const int fireCooltimeMax = 60;
 };
 
