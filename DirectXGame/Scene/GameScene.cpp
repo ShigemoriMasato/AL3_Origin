@@ -24,8 +24,8 @@ void GameScene::Initialize() {
 	camera_->SetProjectionMatrix(PerspectiveFovDesc());
 
 	enemies_.clear();
-	Enemy enemy{camera_, commonData_->modelHandle_[int(ModelType::Enemy)]};
-	enemy.Initialize();
+	std::shared_ptr<Enemy> enemy = std::make_shared<Enemy>(camera_, commonData_->modelHandle_[int(ModelType::Enemy)]);
+	enemy->Initialize();
 	enemies_.push_back(enemy);
 }
 
@@ -49,12 +49,12 @@ Scene* GameScene::Update() {
 	player_->Update();
 
 	for (int i = 0; i < enemies_.size(); ++i) {
-		enemies_[i].Update();
-		if (!enemies_[i].GetIsAlive()) {
+		enemies_[i]->Update();
+		if (!enemies_[i]->GetIsAlive()) {
 			enemies_.erase(enemies_.begin() + i);
 			//新しい敵を生成
-			Enemy enemy{ camera_, commonData_->modelHandle_[int(ModelType::Enemy)] };
-			enemy.Initialize();
+			std::shared_ptr<Enemy> enemy = std::make_shared<Enemy>(camera_, commonData_->modelHandle_[int(ModelType::Enemy)]);
+			enemy->Initialize();
 			enemies_.push_back(enemy);
 		}
 	}
@@ -66,6 +66,6 @@ void GameScene::Draw() const {
 	player_->Draws();
 	
 	for (const auto& enemy : enemies_) {
-		enemy.Draw();
+		enemy->Draw();
 	}
 }

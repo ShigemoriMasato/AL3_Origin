@@ -23,5 +23,5 @@ private:
 
 	std::shared_ptr<Player> player_ = nullptr;
 
-	std::vector<Enemy> enemies_;
+	std::vector<std::shared_ptr<Enemy>> enemies_;
 };
