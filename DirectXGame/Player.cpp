@@ -30,6 +30,14 @@ void Player::Update() {
 		velocity_.x += 0.1f;
 	}
 
+	if (Input::GetKeyState(DIK_Q)) {
+		transform_.rotation.y -= 0.05f;
+	}
+
+	if (Input::GetKeyState(DIK_E)) {
+		transform_.rotation.y += 0.05f;
+	}
+
 	transform_.position += velocity_;
 
 	ImGui::Begin("player");
@@ -41,13 +49,16 @@ void Player::Update() {
 
 	if (Input::GetKeyState(DIK_SPACE) && !Input::GetPreKeyState(DIK_SPACE)) {
 		// プレイヤーの弾を発射
-		PlayerBullet bullet = PlayerBullet(camera_, transform_.position);
+		PlayerBullet bullet = PlayerBullet(camera_, transform_.position, transform_.rotation);
 		bullet.Initialize();
 		bullets_.push_back(bullet);
 	}
 
-	for (auto& bullet : bullets_) {
-		bullet.Update();
+	for (int i = 0; i < bullets_.size(); ++i) {
+		bullets_[i].Update();
+		if (bullets_[i].GetIsDelete()) {
+			bullets_.erase(bullets_.begin() + i);
+		}
 	}
 
 }

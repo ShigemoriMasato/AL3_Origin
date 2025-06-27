@@ -8,7 +8,7 @@ using namespace Matrix;
 GameScene::GameScene(std::shared_ptr<CommonData> commonData) : Scene(commonData), 
 camera_(new Camera()),
 debugCamera_(new DebugCamera()),
-player_(std::make_shared<Player>(camera_, commonData->modelHandle_[int(ModelType::player)])) {
+player_(std::make_shared<Player>(camera_, commonData->modelHandle_[int(ModelType::Player)])) {
 }
 
 GameScene::~GameScene() {
