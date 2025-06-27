@@ -1,5 +1,6 @@
 #pragma once
 #include "../Render/MyDirectX.h"
+#include <memory>
 
 class Scene;
 struct CommonData;
@@ -20,7 +21,7 @@ private:
 	Scene* scene_ = nullptr;
 	Scene* nextScene_ = nullptr;
 
-	CommonData* commonData_ = nullptr;
+	std::shared_ptr<CommonData> commonData_ = nullptr;
 
 	MyDirectX* myDirectX_ = nullptr;
 	Render* render_ = nullptr;

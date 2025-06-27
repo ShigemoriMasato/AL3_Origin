@@ -1,22 +1,23 @@
 #pragma once
-#include "Engine/Data/Transform.h"
-#include "Engine/Camera/Camera.h"
+#include <vector>
+#include <memory>
 
-class Object {
-public:
+class Action;
 
-	Object() = default;
-	virtual ~Object() = default;
-	// 初期化
-	virtual void Initialize() {}
-	// 更新
-	virtual void Update() {}
-	// 描画
-	virtual void Draw(const Camera& camera) const {}
-
-protected:
-
-	Transform transform_;
-
+enum class ActionType {
+	unique,
+	share
 };
 
+class Actor {
+public:
+	virtual ~Actor() = default;
+
+	void EnqueueAction(std::shared_ptr<Action> act, ActionType actiontype = ActionType::unique);
+	void ExecuteQueue();
+
+private:
+
+	std::vector<std::shared_ptr<Action>> actions_;
+
+};

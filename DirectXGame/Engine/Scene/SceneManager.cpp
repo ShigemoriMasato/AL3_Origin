@@ -1,6 +1,7 @@
 #include "SceneManager.h"
 #include "../../Scene/Common/CommonData.h"
 #include "../../Scene/TitleScene.h"
+#include "../../Scene/GameScene.h"
 #include "../Input/Input.h"
 #include "../Sound/Sound.h"
 #include <random>
@@ -8,7 +9,7 @@
 
 SceneManager::SceneManager(const int32_t kWindowWidth, const int32_t kWindowHeight) {
 
-	commonData_ = new CommonData();
+	commonData_ = std::make_shared<CommonData>();
 
 	nextScene_ = nullptr;
 
@@ -27,31 +28,26 @@ SceneManager::SceneManager(const int32_t kWindowWidth, const int32_t kWindowHeig
 
 	//↑↑↑↑↑↑↑↑↑↑↑↑↑↑読み込みたい音↑↑↑↑↑↑↑↑↑↑↑↑↑
 
+	commonData_->textureHandle_.resize(int(TextureType::TextureCount));
 	//↓↓↓↓↓↓↓↓↓↓↓↓↓↓読み込みたい画像↓↓↓↓↓↓↓↓↓↓↓↓↓
-	commonData_->textureHandle_.push_back(myDirectX_->LoadTexture("resources/Block/block.png")); //ブロックテクスチャ
-	commonData_->textureHandle_.push_back(myDirectX_->LoadTexture("resources/Attack_Effect.png")); //攻撃エフェクトテクスチャ
-	commonData_->textureHandle_.push_back(myDirectX_->LoadTexture("resources/HitEffect.png")); //プレイヤーテクスチャ
+	
 	//↑↑↑↑↑↑↑↑↑↑↑↑↑↑読み込みたい画像↑↑↑↑↑↑↑↑↑↑↑↑↑
 
+	commonData_->modelHandle_.resize(int(ModelType::ModelCount));
 	//↓↓↓↓↓↓↓↓↓↓↓↓↓↓読み込みたいモデル↓↓↓↓↓↓↓↓↓↓↓↓↓
-	commonData_->modelHandle_.push_back(myDirectX_->LoadObjFile("resources/Block", "block.obj")); //ブロックモデル
-	commonData_->modelHandle_.push_back(myDirectX_->LoadObjFile("resources/skydome", "skydome.obj"));
-	commonData_->modelHandle_.push_back(myDirectX_->LoadObjFile("resources/player", "player.obj")); //プレイヤーモデル
-	commonData_->modelHandle_.push_back(myDirectX_->LoadObjFile("resources/Skull", "Skull.obj")); //敵モデル
-	commonData_->modelHandle_.push_back(myDirectX_->LoadObjFile("resources/VeryCoolTitle", "VeryCoolTitle.obj")); //タイトルモデル
+	commonData_->modelHandle_[int(ModelType::player)] = myDirectX_->LoadObjFile("Resources/Player", "Player.obj");
+
 	//↑↑↑↑↑↑↑↑↑↑↑↑↑↑読み込みたいモデル↑↑↑↑↑↑↑↑↑↑↑↑↑
 
-	//↓↓↓↓↓↓↓↓↓↓↓↓↓↓読み込みたい量↓↓↓↓↓↓↓↓↓↓↓↓↓
+	//↓↓↓↓↓↓↓↓↓↓↓↓↓↓描画したい量↓↓↓↓↓↓↓↓↓↓↓↓↓
 	myDirectX_->CreateDrawResource(MyDirectX::kBox, 1000);
 	myDirectX_->CreateDrawResource(MyDirectX::kSprite, 100);
-	myDirectX_->CreateModelDrawResource(commonData_->modelHandle_[int(ModelType::skydome)], 1);
-	myDirectX_->CreateModelDrawResource(commonData_->modelHandle_[int(ModelType::player)], 100);
-	myDirectX_->CreateModelDrawResource(commonData_->modelHandle_[int(ModelType::skull)], 10);
-	myDirectX_->CreateModelDrawResource(commonData_->modelHandle_[int(ModelType::Title)], 1);
-	//↑↑↑↑↑↑↑↑↑↑↑↑↑↑読み込みたい量↑↑↑↑↑↑↑↑↑↑↑↑↑
+	myDirectX_->CreateModelDrawResource(commonData_->modelHandle_[int(ModelType::player)], 10);
+
+	//↑↑↑↑↑↑↑↑↑↑↑↑↑↑描画したい量↑↑↑↑↑↑↑↑↑↑↑↑↑
 
 	//最初のシーンを挿入
-	scene_ = new TitleScene(commonData_);
+	scene_ = new GameScene(commonData_);
 	scene_->Initialize();
 }
 
@@ -63,7 +59,6 @@ SceneManager::~SceneManager() {
 	if (nextScene_) {
 		delete nextScene_;
 	}
-	delete commonData_;
 }
 
 void SceneManager::Update() {

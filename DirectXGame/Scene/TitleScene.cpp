@@ -6,7 +6,7 @@
 
 using namespace MyMath;
 
-TitleScene::TitleScene(CommonData* commonData) : Scene(commonData) {
+TitleScene::TitleScene(std::shared_ptr<CommonData> commonData) : Scene(commonData) {
 }
 
 TitleScene::~TitleScene() {
