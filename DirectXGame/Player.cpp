@@ -1,6 +1,7 @@
 #include "Player.h"
-
-using namespace PlayerAct;
+#include "Engine/Input/Input.h"
+#include "externals/imgui/imgui.h"
+#include <algorithm>
 
 Player::Player(Camera* camera, int modelHandle) : Object(camera, ShapeType::Model) {
 	handle_ = modelHandle;
@@ -10,5 +11,32 @@ void Player::Initialize() {
 }
 
 void Player::Update() {
-	ExecuteQueue();
+
+	velocity_ = {};
+
+	if (Input::GetKeyState(DIK_W)) {
+		velocity_.y += 0.1f;
+	}
+
+	if (Input::GetKeyState(DIK_S)) {
+		velocity_.y -= 0.1f;
+	}
+
+	if (Input::GetKeyState(DIK_A)) {
+		velocity_.x -= 0.1f;
+	}
+
+	if (Input::GetKeyState(DIK_D)) {
+		velocity_.x += 0.1f;
+	}
+
+	transform_.position += velocity_;
+
+	ImGui::Begin("player");
+	ImGui::DragFloat3("Position", &transform_.position.x, 0.1f);
+	ImGui::End();
+
+	transform_.position.x = std::clamp(transform_.position.x, -7.2f, 7.2f);
+	transform_.position.y = std::clamp(transform_.position.y, -4.0f, 4.0f);
+
 }

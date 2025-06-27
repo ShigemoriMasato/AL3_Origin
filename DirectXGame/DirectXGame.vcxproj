@@ -35,6 +35,7 @@
     <ClCompile Include="Object\Actor.cpp" />
     <ClCompile Include="Object\Object.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PlayerAct.cpp" />
     <ClCompile Include="Scene\Common\CommonData.cpp" />
     <ClCompile Include="Scene\Common\Scene.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
@@ -69,6 +70,7 @@
     <ClInclude Include="Object\Actor.h" />
     <ClInclude Include="Object\Object.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerAct.h" />
     <ClInclude Include="Scene\Common\CommonData.h" />
     <ClInclude Include="Scene\Common\Scene.h" />
     <ClInclude Include="Scene\GameScene.h" />

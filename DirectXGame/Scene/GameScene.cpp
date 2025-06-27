@@ -19,11 +19,28 @@ GameScene::~GameScene() {
 void GameScene::Initialize() {
 	debugCamera_->Initialize();
 	player_->Initialize();
+	cameraTransform_ = {};
+	cameraTransform_.position = { 0.0f, 0.0f, -20.0f };
+	camera_->SetProjectionMatrix(PerspectiveFovDesc());
 }
 
 Scene* GameScene::Update() {
-	debugCamera_->Update();
-	*camera_ = debugCamera_->GetCamera();
+
+	ImGui::Begin("Camera");
+	ImGui::Checkbox("Debug Camera", &isDebugCamera);
+	ImGui::DragFloat3("scale", &cameraTransform_.scale.x, 0.1f);
+	ImGui::DragFloat3("rotation", &cameraTransform_.rotation.x, 0.1f);
+	ImGui::DragFloat3("position", &cameraTransform_.position.x, 0.1f);
+	ImGui::End();
+
+	if (isDebugCamera) {
+		debugCamera_->Update();
+		*camera_ = debugCamera_->GetCamera();
+	} else {
+		camera_->SetTransform(cameraTransform_);
+		camera_->MakeMatrix();
+	}
+
 	player_->Update();
 
 	return nullptr;

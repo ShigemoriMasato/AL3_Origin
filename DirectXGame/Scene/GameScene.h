@@ -14,6 +14,7 @@ public:
 	void Draw() const override;
 
 private:
+	Transform cameraTransform_{};
 	Camera* camera_;
 	DebugCamera* debugCamera_;
 

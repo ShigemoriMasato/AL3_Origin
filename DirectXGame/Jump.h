@@ -7,6 +7,9 @@ class Player;
 
 namespace PlayerAct {
 
+	/// <summary>
+	/// SampleClass(レイアウト確認用)
+	/// </summary>
 	class Jump : public Action {
 	public:
 

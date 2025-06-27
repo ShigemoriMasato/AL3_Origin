@@ -1,9 +1,7 @@
 #pragma once
-#include "Object/Actor.h"
 #include "Object/Object.h"
-#include "Jump.h"
 
-class Player : public Actor, public Object {
+class Player : public Object {
 public:
 
 	Player(Camera* camera, int modelhandle);
@@ -14,5 +12,8 @@ public:
 	void Update() override;
 
 private:
+
+	Vector3 velocity_{};
+	const float speed_ = 0.01f;
 
 };
