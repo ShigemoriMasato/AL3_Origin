@@ -1,4 +1,5 @@
 #include "MyMath.h"
+#include "../../Object/Object.h"
 #include <cmath>
 #include <cassert>
 
@@ -467,6 +468,15 @@ bool operator==(const Matrix4x4& a, const Matrix4x4& b) {
 
 bool operator!=(const Matrix4x4& a, const Matrix4x4& b) {
 	return !(a == b);
+}
+
+bool CollisionChecker(Object* a, Object* b) {
+	//今は球同士のみ
+	Sphere as = { a->GetTransform().position, 0.5f * a->GetTransform().scale.x };
+	Sphere bs = { b->GetTransform().position, 0.5f * b->GetTransform().scale.x };
+
+	float distance = Vector3(as.center - bs.center).Length();
+	return (distance <= (as.radius + bs.radius));
 }
 
 float MyMath::lerp(float a, float b, float t) {

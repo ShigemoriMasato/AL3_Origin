@@ -128,7 +128,5 @@ namespace MyMath {
 	Vector3 Normalize(Vector3 vec);
 }
 
-bool CollisionChecker(AABB a, AABB b);
-
-bool CollisionChecker(Sphere a, Sphere b);
-
+class Object;
+bool CollisionChecker(Object* a, Object* b);

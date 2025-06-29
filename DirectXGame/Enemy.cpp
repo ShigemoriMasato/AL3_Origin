@@ -38,6 +38,7 @@ void Enemy::Draws() {
 }
 
 void Enemy::OnCollision(Object* other) {
+	Down();
 }
 
 void Enemy::Fire() {

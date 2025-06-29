@@ -78,14 +78,10 @@ void GameScene::AllCollisionCheck() {
 
 #pragma region Player to EnemyBullet
 
-	Sphere playerSphere = { player_->GetTransform().position, 0.5f };
-
 	for (auto& e : enemies_) {
 		for(int i = 0; i < e->GetBullets().size(); ++i) {
 
-			Sphere bulletSphere = { e->GetBullets()[i]->GetTransform().position, 0.5f * e->GetBullets()[i]->GetTransform().scale.x };
-
-			if (CollisionChecker(playerSphere, bulletSphere)) {
+			if (CollisionChecker(player_.get(), e->GetBullets()[i].get())) {
 				player_->OnCollision(e->GetBullets()[i].get());
 				e->GetBullets()[i]->OnCollision(player_.get());
 			}
@@ -97,11 +93,9 @@ void GameScene::AllCollisionCheck() {
 #pragma region Enemy to PlayerBullet
 	for (auto& e : enemies_) {
 
-		Sphere enemySphere = { e->GetTransform().position, 0.5f * e->GetTransform().scale.x };
-
 		for (int i = 0; i < player_->GetBullets().size(); ++i) {
-			Sphere bulletSphere = { player_->GetBullets()[i]->GetTransform().position, 0.5f * player_->GetBullets()[i]->GetTransform().scale.x };
-			if (CollisionChecker(enemySphere, bulletSphere)) {
+			
+			if (CollisionChecker(e.get(), player_->GetBullets()[i].get())) {
 				e->OnCollision(player_->GetBullets()[i].get());
 				player_->GetBullets()[i]->OnCollision(e.get());
 			}

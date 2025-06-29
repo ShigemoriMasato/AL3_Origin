@@ -43,6 +43,7 @@ public:
 
 	Transform GetTransform() const { return transform_; }
 	bool GetIsActive() const { return isActive_; }
+	ShapeType GetShapeType() const { return type_; }
 
 	std::string tag;
 
