@@ -524,6 +524,23 @@ Vector3 MyMath::EaseOut(Vector3 a, Vector3 b, float t) {
 	);
 }
 
+Vector3 MyMath::Sleap(Vector3 a, Vector3 b, float t) {
+	if (t <= 0.0f) return a;
+	if (t >= 1.0f) return b;
+	float theta = std::acosf(a.x * b.x + a.y * b.y + a.z * b.z);
+	float sinTheta = std::sinf(theta);
+	if (sinTheta < 1e-6f) {
+		return a;
+	}
+	float ratioA = std::sinf((1.0f - t) * theta) / sinTheta;
+	float ratioB = std::sinf(t * theta) / sinTheta;
+	return Vector3(
+		a.x * ratioA + b.x * ratioB,
+		a.y * ratioA + b.y * ratioB,
+		a.z * ratioA + b.z * ratioB
+	);
+}
+
 Vector3 MyMath::ConvertVector(const Vector4& v) {
 	return Vector3(v.x, v.y, v.z);
 }
@@ -718,8 +735,13 @@ Matrix4x4 Matrix::MakeAffineMatrix(Transform transform) {
 	return MakeAffineMatrix(transform.position, transform.rotation, transform.scale);
 }
 
-bool Collision::AABBtoAABB(AABB a, AABB b) {
+bool CollisionChecker(AABB a, AABB b) {
 	return (a.min.x <= b.max.x && a.max.x >= b.min.x &&
 		a.min.y <= b.max.y && a.max.y >= b.min.y &&
 		a.min.z <= b.max.z && a.max.z >= b.min.z);
+}
+
+bool CollisionChecker(Sphere a, Sphere b) {
+	float distance = Vector3(a.center - b.center).Length();
+	return distance <= (a.radius + b.radius);
 }

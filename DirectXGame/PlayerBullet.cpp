@@ -20,6 +20,10 @@ void PlayerBullet::Update() {
 	transform_.position += velocity_;
 
 	if (transform_.position.Length() >= 100.0f) {
-		isDelete_ = true;
+		isActive_ = false;
 	}
+}
+
+void PlayerBullet::OnCollision(Object* other) {
+	isActive_ = false;
 }

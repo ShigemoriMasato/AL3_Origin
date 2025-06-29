@@ -52,32 +52,34 @@ public:
 	std::shared_ptr<EnemyState> Down();
 	std::shared_ptr<EnemyState> Up();
 
-	bool GetIsAlive() const { return isAlive_; }
-
-	void MovePosition(Vector3 velocity);
-
 	/// <summary>
 	/// EnemyBulletとEnemyのDraw
 	/// </summary>
 	void Draws();
 
+	void MovePosition(Vector3 velocity);
+
+	bool GetIsAlive() const { return isActive_; }
+
+	void OnCollision(Object* object) override;
+
+	std::vector<std::shared_ptr<EnemyBullet>> GetBullets() const { return bullets_; }
+
 private:
 
 	void Fire();
 
-	void Death() { isAlive_ = false; }
+	void Death() { isActive_ = false; }
 
 	using StateFunction = void (Enemy::*)(); // メンバ関数ポインタ型を定義
 	static StateFunction stateFunc[];       // メンバ関数ポインタの配列を宣言
 
 	std::shared_ptr<EnemyState> state_;
-
-	bool isAlive_ = true;
-
+	
 	int frame_ = 0;
 
 	//弾
-	std::vector<EnemyBullet> bullets_;
+	std::vector<std::shared_ptr<EnemyBullet>> bullets_;
 	int fireCooltime_ = 0;
 	static inline const int fireCooltimeMax = 60;
 

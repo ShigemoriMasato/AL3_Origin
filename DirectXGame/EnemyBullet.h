@@ -8,16 +8,17 @@ public:
 	~EnemyBullet() = default;
 	void Initialize() override;
 	void Update() override;
-	bool GetIsDelete() const { return isDelete_; }
+
+	void OnCollision(Object* other) override;
 
 private:
 
 	Vector3 velocity_;
 	Vector3 direction_;
 	static inline const float speed = 0.1f;
-	bool isDelete_ = false;
 
 	int frame_ = 0;
 
+	Object* target_ = nullptr;
 };
 

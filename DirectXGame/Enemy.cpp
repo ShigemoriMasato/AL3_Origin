@@ -22,8 +22,8 @@ void Enemy::Update() {
 	timecall_->Update();
 
 	for (int i = 0; i < bullets_.size(); ++i) {
-		bullets_[i].Update();
-		if (bullets_[i].GetIsDelete()) {
+		bullets_[i]->Update();
+		if (!bullets_[i]->GetIsActive()) {
 			bullets_.erase(bullets_.begin() + i--);
 		}
 	}
@@ -33,13 +33,16 @@ void Enemy::Draws() {
 	Draw();
 
 	for (const auto& bullet : bullets_) {
-		bullet.Draw();
+		bullet->Draw();
 	}
 }
 
+void Enemy::OnCollision(Object* other) {
+}
+
 void Enemy::Fire() {
-	EnemyBullet bullet = EnemyBullet(camera_, transform_.position, target_);
-	bullet.Initialize();
+	std::shared_ptr<EnemyBullet> bullet = std::make_shared<EnemyBullet>(camera_, transform_.position, target_);
+	bullet->Initialize();
 	bullets_.push_back(bullet);
 }
 

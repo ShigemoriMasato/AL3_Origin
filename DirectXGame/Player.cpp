@@ -49,14 +49,14 @@ void Player::Update() {
 
 	if (Input::GetKeyState(DIK_SPACE) && !Input::GetPreKeyState(DIK_SPACE)) {
 		// プレイヤーの弾を発射
-		PlayerBullet bullet = PlayerBullet(camera_, transform_.position, transform_.rotation);
-		bullet.Initialize();
+		std::shared_ptr<PlayerBullet> bullet = std::make_shared<PlayerBullet>(camera_, transform_.position, transform_.rotation);
+		bullet->Initialize();
 		bullets_.push_back(bullet);
 	}
 
 	for (int i = 0; i < bullets_.size(); ++i) {
-		bullets_[i].Update();
-		if (bullets_[i].GetIsDelete()) {
+		bullets_[i]->Update();
+		if (!bullets_[i]->GetIsActive()) {
 			bullets_.erase(bullets_.begin() + i--);
 		}
 	}
@@ -67,6 +67,6 @@ void Player::Draws() const {
 	Draw();
 
 	for (const auto& bullet : bullets_) {
-		bullet.Draw();
+		bullet->Draw();
 	}
 }

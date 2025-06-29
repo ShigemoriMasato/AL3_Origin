@@ -18,6 +18,8 @@ private:
 
 	void CreateEnemy();
 
+	void AllCollisionCheck();
+
 	Transform cameraTransform_{};
 	Camera* camera_;
 	DebugCamera* debugCamera_;

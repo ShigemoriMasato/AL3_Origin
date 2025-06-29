@@ -1,6 +1,7 @@
 #pragma once
 #include "../Engine/Data/Transform.h"
 #include "../Engine/Camera/Camera.h"
+#include <string>
 
 enum class ShapeType {
 	Triangle,
@@ -24,6 +25,8 @@ public:
 	// 描画
 	virtual void Draw() const;
 
+	virtual void OnCollision(Object* other) {}
+
 	/// <summary>
 	/// 三角形、スプライト、球のときのみ適用
 	/// </summary>
@@ -38,9 +41,10 @@ public:
 		this->rb = rb;
 	}
 
-	Transform GetTransform() const {
-		return transform_;
-	}
+	Transform GetTransform() const { return transform_; }
+	bool GetIsActive() const { return isActive_; }
+
+	std::string tag;
 
 protected:
 
@@ -48,7 +52,11 @@ protected:
 	uint32_t color = 0xffffffff;
 	int handle_ = 1;
 
+	bool isActive_ = true;
+
 	Camera* camera_ = nullptr;
+
+	Vector3 size_ = { 1.0f, 1.0f, 1.0f };
 
 private:
 

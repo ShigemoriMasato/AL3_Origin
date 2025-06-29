@@ -20,7 +20,7 @@ void GameScene::Initialize() {
 	debugCamera_->Initialize();
 	player_->Initialize();
 	cameraTransform_ = {};
-	cameraTransform_.position = { 0.0f, 0.0f, -20.0f };
+	cameraTransform_.position = { 0.0f, 0.0f, -32.0f };
 	camera_->SetProjectionMatrix(PerspectiveFovDesc());
 
 	enemies_.clear();
@@ -55,6 +55,8 @@ Scene* GameScene::Update() {
 		}
 	}
 
+	AllCollisionCheck();
+
 	return nullptr;
 }
 
@@ -70,4 +72,40 @@ void GameScene::CreateEnemy() {
 	std::shared_ptr<Enemy> enemy = std::make_shared<Enemy>(camera_, commonData_->modelHandle_[int(ModelType::Enemy)], player_.get());
 	enemy->Initialize();
 	enemies_.push_back(enemy);
+}
+
+void GameScene::AllCollisionCheck() {
+
+#pragma region Player to EnemyBullet
+
+	Sphere playerSphere = { player_->GetTransform().position, 0.5f };
+
+	for (auto& e : enemies_) {
+		for(int i = 0; i < e->GetBullets().size(); ++i) {
+
+			Sphere bulletSphere = { e->GetBullets()[i]->GetTransform().position, 0.5f * e->GetBullets()[i]->GetTransform().scale.x };
+
+			if (CollisionChecker(playerSphere, bulletSphere)) {
+				player_->OnCollision(e->GetBullets()[i].get());
+				e->GetBullets()[i]->OnCollision(player_.get());
+			}
+		}
+	}
+
+#pragma endregion
+
+#pragma region Enemy to PlayerBullet
+	for (auto& e : enemies_) {
+
+		Sphere enemySphere = { e->GetTransform().position, 0.5f * e->GetTransform().scale.x };
+
+		for (int i = 0; i < player_->GetBullets().size(); ++i) {
+			Sphere bulletSphere = { player_->GetBullets()[i]->GetTransform().position, 0.5f * player_->GetBullets()[i]->GetTransform().scale.x };
+			if (CollisionChecker(enemySphere, bulletSphere)) {
+				e->OnCollision(player_->GetBullets()[i].get());
+				player_->GetBullets()[i]->OnCollision(e.get());
+			}
+		}
+	}
+
 }

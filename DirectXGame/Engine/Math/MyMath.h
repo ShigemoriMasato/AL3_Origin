@@ -119,7 +119,7 @@ namespace MyMath {
 	float EaseOut(float a, float b, float t);
 	Vector3 EaseOut(Vector3 a, Vector3 b, float t);
 
-
+	Vector3 Sleap(Vector3 a, Vector3 b, float t);
 
 	Vector3 ConvertVector(const Vector4& v);
 
@@ -128,6 +128,7 @@ namespace MyMath {
 	Vector3 Normalize(Vector3 vec);
 }
 
-namespace Collision {
-	bool AABBtoAABB(AABB a, AABB b);
-}
+bool CollisionChecker(AABB a, AABB b);
+
+bool CollisionChecker(Sphere a, Sphere b);
+
