@@ -20,7 +20,7 @@ void GameScene::Initialize() {
 	debugCamera_->Initialize();
 	player_->Initialize();
 	cameraTransform_ = {};
-	cameraTransform_.position = { 0.0f, 0.0f, -32.0f };
+	cameraTransform_.position = { 0.0f, 0.0f, -20.0f };
 	camera_->SetProjectionMatrix(PerspectiveFovDesc());
 
 	enemies_.clear();
@@ -76,28 +76,35 @@ void GameScene::CreateEnemy() {
 
 void GameScene::AllCollisionCheck() {
 
-#pragma region Player to EnemyBullet
+	//Objectをリストにまとめる
+	std::list<Object*> objects;
+	objects.push_back(player_.get());
+	for (auto& b : player_->GetBullets()) {
+		objects.push_back(b.get());
+	}
 
-	for (auto& e : enemies_) {
-		for(int i = 0; i < e->GetBullets().size(); ++i) {
-
-			if (CollisionChecker(player_.get(), e->GetBullets()[i].get())) {
-				player_->OnCollision(e->GetBullets()[i].get());
-				e->GetBullets()[i]->OnCollision(player_.get());
-			}
+	for(const auto& enemy : enemies_) {
+		objects.push_back(enemy.get());
+	}
+	for (const auto& enemy : enemies_) {
+		for (const auto& bullet : enemy->GetBullets()) {
+			objects.push_back(bullet.get());
 		}
 	}
 
-#pragma endregion
+	std::list<Object*>::iterator itrA = objects.begin();
+	for(; itrA != objects.end(); ++itrA) {
+		std::list<Object*>::iterator itrB = itrA;
+		++itrB;
+		for (; itrB != objects.end(); ++itrB) {
 
-#pragma region Enemy to PlayerBullet
-	for (auto& e : enemies_) {
+			if ((*itrA)->tag == (*itrB)->tag) {
+				continue;
+			}
 
-		for (int i = 0; i < player_->GetBullets().size(); ++i) {
-			
-			if (CollisionChecker(e.get(), player_->GetBullets()[i].get())) {
-				e->OnCollision(player_->GetBullets()[i].get());
-				player_->GetBullets()[i]->OnCollision(e.get());
+			if (CollisionChecker(*itrA, *itrB)) {
+				(*itrA)->OnCollision(*itrB);
+				(*itrB)->OnCollision(*itrA);
 			}
 		}
 	}

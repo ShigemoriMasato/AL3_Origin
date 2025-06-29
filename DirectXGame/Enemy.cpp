@@ -5,6 +5,7 @@ Enemy::Enemy(Camera* camera, int modelHandle, Object* target) : Object(camera, S
 timecall_(new TimeCall()),
 target_(target) {
 	handle_ = modelHandle;
+	tag = "Enemy";
 }
 
 void Enemy::Initialize() {

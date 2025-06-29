@@ -5,6 +5,7 @@
 
 Player::Player(Camera* camera, int modelHandle) : Object(camera, ShapeType::Model) {
 	handle_ = modelHandle;
+	tag = "Player";
 }
 
 void Player::Initialize() {

@@ -13,6 +13,7 @@ EnemyBullet::EnemyBullet(Camera* camera, Vector3 pos, Object* target) : Object(c
 	color = 0xffff;//青
 
 	target_ = target;
+	tag = "Enemy";
 }
 
 void EnemyBullet::Initialize() {

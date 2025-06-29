@@ -9,6 +9,7 @@ PlayerBullet::PlayerBullet(Camera* camera, Vector3 pos, Vector3 rotate) : Object
 	
 	velocity_ = {};
 	direction_ = Vector3(0.0f, 0.0f, 1.0f) * MakeRotationMatrix(rotate);
+	tag = "Player";
 }
 
 void PlayerBullet::Initialize() {
