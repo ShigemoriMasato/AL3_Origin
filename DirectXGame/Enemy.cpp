@@ -1,16 +1,16 @@
 #include "Enemy.h"
 #include <numbers>
 
-Enemy::Enemy(Camera* camera, int modelHandle, Object* target) : Object(camera, ShapeType::Model),
+Enemy::Enemy(Camera* camera, int modelHandle, int bulletHandle, Object* target) : Object(camera, ShapeType::Model),
 timecall_(new TimeCall()),
 target_(target) {
 	handle_ = modelHandle;
+	bulletModelHandle_ = bulletHandle;
 	tag = "Enemy";
 }
 
 void Enemy::Initialize() {
-	transform_.position = { 1.0f, 0.0f, 5.0f };
-	transform_.rotation.y = std::numbers::pi_v<float>;
+	transform_->position = { 1.0f, 0.0f, 5.0f };
 	state_ = std::make_shared<EnemyStateApploach>(this);
 	fireCooltime_ = 0;
 	timecall_->Register(std::bind(&Enemy::Fire, this), 30, true);
@@ -43,7 +43,7 @@ void Enemy::OnCollision(Object* other) {
 }
 
 void Enemy::Fire() {
-	std::shared_ptr<EnemyBullet> bullet = std::make_shared<EnemyBullet>(camera_, transform_.position, target_);
+	std::shared_ptr<EnemyBullet> bullet = std::make_shared<EnemyBullet>(camera_, transform_->position, bulletModelHandle_, target_);
 	bullet->Initialize();
 	bullets_.push_back(bullet);
 }
@@ -57,7 +57,7 @@ std::shared_ptr<EnemyState> Enemy::Up() {
 }
 
 void Enemy::MovePosition(Vector3 velocity) {
-	transform_.position += velocity;
+	transform_->position += velocity;
 }
 
 std::shared_ptr<EnemyState> EnemyStateApploach::Down() {

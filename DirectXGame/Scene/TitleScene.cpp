@@ -16,7 +16,7 @@ void TitleScene::Initialize() {
 	camera_->SetProjectionMatrix(PerspectiveFovDesc());
 	Transform cameraTransform{};
 	cameraTransform.position = { 0.0f, 0.0f, -10.0f };
-	camera_->SetTransform(cameraTransform);
+	camera_->SetTransform(&cameraTransform);
 	camera_->MakeMatrix();
 }
 

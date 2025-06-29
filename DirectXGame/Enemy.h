@@ -42,7 +42,7 @@ private:
 
 class Enemy : public Object {
 public:
-	Enemy(Camera* camera, int modelHandle, Object* target);
+	Enemy(Camera* camera, int modelHandle, int bulletHandle, Object* target);
 	~Enemy() = default;
 
 	void Initialize() override;
@@ -79,6 +79,7 @@ private:
 	int frame_ = 0;
 
 	//弾
+	int bulletModelHandle_ = 0;
 	std::vector<std::shared_ptr<EnemyBullet>> bullets_;
 	int fireCooltime_ = 0;
 	static inline const int fireCooltimeMax = 60;

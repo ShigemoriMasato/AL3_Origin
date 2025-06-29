@@ -7,7 +7,7 @@ namespace {
 	}
 }
 
-void Object::Draw() const {
+void Object::Draw(const Matrix4x4* worldMatrix) const {
 	if (!camera_) {
 		return;
 	}
@@ -18,6 +18,13 @@ void Object::Draw() const {
 
 	if (handle_ < 0) {
 		return;
+	}
+
+	Matrix4x4 worldMat;
+	if(worldMatrix) {
+		worldMat = *worldMatrix;
+	} else {
+		worldMat = MakeAffineMatrix(*transform_);
 	}
 
 	MaterialData materialData;
@@ -32,20 +39,20 @@ void Object::Draw() const {
 	case ShapeType::Triangle:
 
 		Render::DrawTriangle(Convert(lt), Convert(rt), Convert(lb),
-			MakeAffineMatrix(transform_), camera_, materialData, {}, handle_
+			worldMat, camera_, materialData, {}, handle_
 		);
 
 		break;
 
 	case ShapeType::Sphere:
 
-		Render::DrawSphere(lt.Length(), MakeAffineMatrix(transform_), camera_, materialData, {}, handle_);
+		Render::DrawSphere(lt.Length(), worldMat, camera_, materialData, {}, handle_);
 
 		break;
 
 	case ShapeType::Cube:
 
-		Render::DrawBox(MakeAffineMatrix(transform_), camera_, materialData, {}, handle_);
+		Render::DrawBox(worldMat, camera_, materialData, {}, handle_);
 
 		break;
 
@@ -53,7 +60,7 @@ void Object::Draw() const {
 
 		Render::DrawSprite(
 			Convert(lt), Convert(rt), Convert(lb), Convert(rb),
-			MakeAffineMatrix(transform_), camera_, materialData, {}, handle_
+			worldMat, camera_, materialData, {}, handle_
 		);
 
 		break;
@@ -62,14 +69,14 @@ void Object::Draw() const {
 
 		Render::DrawLine(
 			Convert(lt), Convert(rt), 
-			MakeAffineMatrix(transform_), camera_, materialData, {}, handle_
+			worldMat, camera_, materialData, {}, handle_
 		);
 
 		break;
 
 	case ShapeType::Model:
 
-		Render::DrawModel(handle_, MakeAffineMatrix(transform_), camera_, materialData, {});
+		Render::DrawModel(handle_, worldMat, camera_, materialData, {});
 
 		break;
 	}

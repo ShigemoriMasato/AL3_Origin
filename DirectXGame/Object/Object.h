@@ -2,6 +2,7 @@
 #include "../Engine/Data/Transform.h"
 #include "../Engine/Camera/Camera.h"
 #include <string>
+#include <memory>
 
 enum class ShapeType {
 	Triangle,
@@ -16,14 +17,14 @@ enum class ShapeType {
 class Object {
 public:
 
-	Object(Camera* camera, ShapeType type) : camera_(camera), type_(type) {};
+	Object(Camera* camera, ShapeType type) : camera_(camera), type_(type), transform_(std::make_unique<Transform>()) {};
 	virtual ~Object() = default;
 	// 初期化
 	virtual void Initialize() = 0;
 	// 更新
 	virtual void Update() = 0;
 	// 描画
-	virtual void Draw() const;
+	virtual void Draw(const Matrix4x4* worldMatrix = nullptr) const;
 
 	virtual void OnCollision(Object* other) {}
 
@@ -41,7 +42,7 @@ public:
 		this->rb = rb;
 	}
 
-	Transform GetTransform() const { return transform_; }
+	virtual Transform GetTransform() const { return *transform_; }
 	bool GetIsActive() const { return isActive_; }
 	ShapeType GetShapeType() const { return type_; }
 
@@ -49,7 +50,7 @@ public:
 
 protected:
 
-	Transform transform_{};
+	std::shared_ptr<Transform> transform_{};
 	uint32_t color = 0xffffffff;
 	int handle_ = 1;
 

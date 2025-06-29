@@ -4,6 +4,8 @@
 #include "../Engine/Camera/DebugCamera.h"
 #include "../Player.h"
 #include "../Enemy.h"
+#include "../CollisionManager.h"
+#include "../RailCameraController.h"
 
 class GameScene : public Scene {
 public:
@@ -20,7 +22,9 @@ private:
 
 	void AllCollisionCheck();
 
-	Transform cameraTransform_{};
+	std::unique_ptr<CollisionManager> collisionManager_;
+
+	std::unique_ptr<RailCameraController> railCameraController_ = nullptr;
 	Camera* camera_;
 	DebugCamera* debugCamera_;
 

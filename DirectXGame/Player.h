@@ -7,7 +7,7 @@
 class Player : public Object {
 public:
 
-	Player(Camera* camera, int modelhandle);
+	Player(Camera* camera, int modelhandle, int bullethandle);
 	~Player() = default;
 
 	void Initialize() override;
@@ -21,11 +21,19 @@ public:
 
 	std::vector<std::shared_ptr<PlayerBullet>> GetBullets() { return bullets_; }
 
+	Transform GetTransform() const override;
+
 private:
 
 	Vector3 velocity_{};
 	const float speed_ = 0.01f;
 
+	int cooltime_ = 0;
+	const int maxCooltime_ = 5;
+	int bulletModelHandle_ = 0;
 	std::vector<std::shared_ptr<PlayerBullet>> bullets_;
 
+	Vector3 playerOffset_{0.0f, 0.0f, 20.0f};
+
+	Matrix4x4 screenTransform_{};
 };
