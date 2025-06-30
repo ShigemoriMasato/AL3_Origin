@@ -44,6 +44,7 @@ SceneManager::SceneManager(const int32_t kWindowWidth, const int32_t kWindowHeig
 	//↓↓↓↓↓↓↓↓↓↓↓↓↓↓描画したい量↓↓↓↓↓↓↓↓↓↓↓↓↓
 	myDirectX_->CreateDrawResource(MyDirectX::kBox, 1000);
 	myDirectX_->CreateDrawResource(MyDirectX::kSprite, 100);
+	myDirectX_->CreateDrawResource(MyDirectX::kLine, 500);
 	myDirectX_->CreateModelDrawResource(commonData_->modelHandle_[int(ModelType::Player)], 10);
 	myDirectX_->CreateModelDrawResource(commonData_->modelHandle_[int(ModelType::Enemy)], 50);
 	myDirectX_->CreateModelDrawResource(commonData_->modelHandle_[int(ModelType::SkySphere)], 1);

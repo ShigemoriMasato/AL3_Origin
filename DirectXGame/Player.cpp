@@ -4,15 +4,16 @@
 #include <algorithm>
 #include <numbers>
 
-Player::Player(Camera* camera, int modelHandle, int bullethandle) : Object(camera, ShapeType::Model) {
+Player::Player(Camera* camera, int modelHandle, int bullethandle) : Object(camera, ShapeType::Model),
+playerTransform_(std::make_shared<Transform>()){
 	handle_ = modelHandle;
 	bulletModelHandle_ = bullethandle;
-	transform_->rotation.y = std::numbers::pi_v<float>;
+	playerTransform_->rotation.y = std::numbers::pi_v<float>;
 	tag = "Player";
 }
 
 void Player::Initialize() {
-	transform_->position = { 0.0f, 0.0f, 20.0f };
+	playerTransform_->position = { 0.0f, 0.0f, 20.0f };
 }
 
 void Player::Update() {
@@ -36,35 +37,35 @@ void Player::Update() {
 	}
 
 	if (Input::GetKeyState(DIK_Q)) {
-		transform_->rotation.y -= 0.05f;
+		playerTransform_->rotation.y -= 0.05f;
 	}
 
 	if (Input::GetKeyState(DIK_E)) {
-		transform_->rotation.y += 0.05f;
+		playerTransform_->rotation.y += 0.05f;
 	}
 
-	transform_->position += velocity_;
+	playerTransform_->position += velocity_;
 
 	ImGui::Begin("player");
-	ImGui::DragFloat3("Position", &transform_->position.x, 0.1f);
+	ImGui::DragFloat3("Position", &playerTransform_->position.x, 0.1f);
 	ImGui::End();
 
-	transform_->position.x = std::clamp(transform_->position.x, -7.2f, 7.2f);
-	transform_->position.y = std::clamp(transform_->position.y, -4.0f, 4.0f);
+	playerTransform_->position.x = std::clamp(playerTransform_->position.x, -7.2f, 7.2f);
+	playerTransform_->position.y = std::clamp(playerTransform_->position.y, -4.0f, 4.0f);
 
 	if (cooltime_ > 0) {
 		--cooltime_;
 	}
 	
-	screenTransform_ = MakeAffineMatrix(*transform_) * MakeScaleMatrix(camera_->GetTransform().scale) * Inverse(MakeRotationMatrix(camera_->GetTransform().rotation)) * MakeTranslationMatrix(camera_->GetTransform().position);
+	screenTransform_ = MakeAffineMatrix(*playerTransform_) * MakeScaleMatrix(camera_->GetTransform().scale) * Inverse(MakeRotationMatrix(camera_->GetTransform().rotation)) * MakeTranslationMatrix(camera_->GetTransform().position);
+
+	Vector3 pos = { screenTransform_.m[3][0], screenTransform_.m[3][1] , screenTransform_.m[3][2] };
+	Vector3 rot = playerTransform_->rotation + camera_->GetTransform().rotation;
 
 	if (cooltime_ <= 0 && Input::GetKeyState(DIK_SPACE)) {
 		cooltime_ = maxCooltime_;
 		// プレイヤーの弾を発射
-		Vector3 rotate = transform_->rotation - camera_->GetTransform().rotation;
-		rotate.y -= std::numbers::pi_v<float>;
-		Vector3 position = { screenTransform_.m[3][0], screenTransform_.m[3][1], screenTransform_.m[3][2] };
-		std::shared_ptr<PlayerBullet> bullet = std::make_shared<PlayerBullet>(camera_, position, rotate, bulletModelHandle_);
+		std::shared_ptr<PlayerBullet> bullet = std::make_shared<PlayerBullet>(camera_, pos, rot, bulletModelHandle_);
 		bullet->Initialize();
 		bullets_.push_back(bullet);
 	}
@@ -77,11 +78,11 @@ void Player::Update() {
 	}
 
 	ImGui::Begin("WorldPlayer");
-	Vector3 pos = { screenTransform_.m[3][0], screenTransform_.m[3][1] , screenTransform_.m[3][2] };
 	ImGui::Text("Position: (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
-	Vector3 rot = transform_->rotation + camera_->GetTransform().rotation;
 	ImGui::Text("Rotation: (%.2f, %.2f, %.2f)", rot.x, rot.y, rot.z);
 	ImGui::End();
+
+	transform_->position = pos;
 }
 
 void Player::Draws() const {
@@ -93,7 +94,7 @@ void Player::Draws() const {
 }
 
 Transform Player::GetTransform() const {
-	Transform ans = *transform_;
+	Transform ans = *playerTransform_;
 	ans.scale *= camera_->GetTransform().scale;
 	ans.rotation += camera_->GetTransform().rotation;
 	ans.position += camera_->GetTransform().position;

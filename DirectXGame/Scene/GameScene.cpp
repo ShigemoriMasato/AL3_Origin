@@ -9,7 +9,7 @@ GameScene::GameScene(std::shared_ptr<CommonData> commonData) : Scene(commonData)
 camera_(new Camera()),
 debugCamera_(new DebugCamera()),
 collisionManager_(std::make_unique<CollisionManager>()) {
-	railCameraController_ = std::make_unique<RailCameraController>(camera_);
+	railCameraController_ = std::make_unique<RailCameraController>();
 	player_ = std::make_shared<Player>(railCameraController_->GetCameraPtr(), commonData->modelHandle_[int(ModelType::Player)], commonData_->modelHandle_[int(ModelType::Bullet)]);
 }
 
@@ -64,6 +64,8 @@ void GameScene::Draw() const {
 	for (const auto& enemy : enemies_) {
 		enemy->Draws();
 	}
+
+	railCameraController_->Draw(camera_);
 
 	Render::DrawModel(commonData_->modelHandle_[int(ModelType::SkySphere)], MakeIdentity4x4(), camera_);
 }

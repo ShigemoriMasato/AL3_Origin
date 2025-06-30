@@ -33,7 +33,7 @@ private:
 	int bulletModelHandle_ = 0;
 	std::vector<std::shared_ptr<PlayerBullet>> bullets_;
 
-	Vector3 playerOffset_{0.0f, 0.0f, 20.0f};
+	std::shared_ptr<Transform> playerTransform_ = nullptr;
 
 	Matrix4x4 screenTransform_{};
 };
