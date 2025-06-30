@@ -55,12 +55,16 @@ void Player::Update() {
 	if (cooltime_ > 0) {
 		--cooltime_;
 	}
+	
+	screenTransform_ = MakeAffineMatrix(*transform_) * MakeScaleMatrix(camera_->GetTransform().scale) * Inverse(MakeRotationMatrix(camera_->GetTransform().rotation)) * MakeTranslationMatrix(camera_->GetTransform().position);
+
 	if (cooltime_ <= 0 && Input::GetKeyState(DIK_SPACE)) {
 		cooltime_ = maxCooltime_;
 		// プレイヤーの弾を発射
-		Vector3 rotate = transform_->rotation + camera_->GetTransform().rotation;
+		Vector3 rotate = transform_->rotation - camera_->GetTransform().rotation;
 		rotate.y -= std::numbers::pi_v<float>;
-		std::shared_ptr<PlayerBullet> bullet = std::make_shared<PlayerBullet>(camera_, transform_->position + camera_->GetTransform().position, rotate, bulletModelHandle_);
+		Vector3 position = { screenTransform_.m[3][0], screenTransform_.m[3][1], screenTransform_.m[3][2] };
+		std::shared_ptr<PlayerBullet> bullet = std::make_shared<PlayerBullet>(camera_, position, rotate, bulletModelHandle_);
 		bullet->Initialize();
 		bullets_.push_back(bullet);
 	}
@@ -72,8 +76,12 @@ void Player::Update() {
 		}
 	}
 
-	screenTransform_ = MakeAffineMatrix(*transform_);
-	screenTransform_ *= MakeAffineMatrix(camera_->GetTransform());
+	ImGui::Begin("WorldPlayer");
+	Vector3 pos = { screenTransform_.m[3][0], screenTransform_.m[3][1] , screenTransform_.m[3][2] };
+	ImGui::Text("Position: (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
+	Vector3 rot = transform_->rotation + camera_->GetTransform().rotation;
+	ImGui::Text("Rotation: (%.2f, %.2f, %.2f)", rot.x, rot.y, rot.z);
+	ImGui::End();
 }
 
 void Player::Draws() const {

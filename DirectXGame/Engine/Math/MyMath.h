@@ -25,6 +25,7 @@ bool operator!=(const Vector2& a, const Vector2& b);
 
 Vector3 operator+(const Vector3& a, const Vector3& b);
 Vector3 operator-(const Vector3& a, const Vector3& b);
+Vector3 operator-(const Vector3& a);
 Vector3 operator*(const Vector3& a, const Vector3& b);
 Vector3 operator*(const Vector3& a, float b);
 Vector3 operator*(float a, const Vector3& b);

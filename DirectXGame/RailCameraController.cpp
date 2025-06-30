@@ -1,8 +1,12 @@
 #include "RailCameraController.h"
 #include "externals/imgui/imgui.h"
 
-RailCameraController::RailCameraController(Camera* camera) : camera_(camera),
-transform_(std::make_unique<Transform>()) {
+RailCameraController::RailCameraController(Camera* camera) :
+transform_(std::make_unique<Transform>()),
+camera_(std::make_shared<Camera>()) {
+	if (camera) {
+		*camera_ = *camera;
+	}
 	camera_->SetTransform(transform_.get());
 }
 

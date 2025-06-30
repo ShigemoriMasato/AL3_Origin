@@ -5,14 +5,16 @@
 class RailCameraController {
 public:
 
-	RailCameraController(Camera* camera);
+	RailCameraController(Camera* camera = nullptr);
 	~RailCameraController() = default;
 	void Initialize();
 	void Update();
+	Camera GetCamera() { return *camera_; }
+	Camera* GetCameraPtr() { return camera_.get(); }
 
 private:
 
-	Camera* camera_ = nullptr;
+	std::shared_ptr<Camera> camera_;
 
 	std::shared_ptr<Transform> transform_;
 };

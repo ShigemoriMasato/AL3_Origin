@@ -8,9 +8,9 @@ using namespace Matrix;
 GameScene::GameScene(std::shared_ptr<CommonData> commonData) : Scene(commonData),
 camera_(new Camera()),
 debugCamera_(new DebugCamera()),
-player_(std::make_shared<Player>(camera_, commonData->modelHandle_[int(ModelType::Player)], commonData_->modelHandle_[int(ModelType::Bullet)])),
 collisionManager_(std::make_unique<CollisionManager>()) {
 	railCameraController_ = std::make_unique<RailCameraController>(camera_);
+	player_ = std::make_shared<Player>(railCameraController_->GetCameraPtr(), commonData->modelHandle_[int(ModelType::Player)], commonData_->modelHandle_[int(ModelType::Bullet)]);
 }
 
 GameScene::~GameScene() {
@@ -30,7 +30,12 @@ void GameScene::Initialize() {
 
 Scene* GameScene::Update() {
 
+	ImGui::Begin("Camera");
+	ImGui::Checkbox("Debug Camera", &isDebugCamera);
+	ImGui::End();
+
 	railCameraController_->Update();
+	*camera_ = railCameraController_->GetCamera();
 
 	if (isDebugCamera) {
 		debugCamera_->Update();
