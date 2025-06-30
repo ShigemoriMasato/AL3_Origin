@@ -12,7 +12,8 @@ camera_(std::make_shared<Camera>()) {
 }
 
 void RailCameraController::Initialize() {
-	transform_->position = { 0.0f, 0.0f, -20.0f };
+	transform_->position = { 0.0f, 0.0f, 0.0f };
+	transform_->rotation = { -0.3f, 0.0f, 0.0f };
 	camera_->SetProjectionMatrix(PerspectiveFovDesc());
 
 	 controllPoints_ = { {0.0f, 0.0f, -0.5f},
@@ -38,7 +39,7 @@ void RailCameraController::Update() {
 	lapTimer_ = int(MyMath::Repeat(float(lapTimer_), float(lapTime_)));
 	t = float(lapTimer_) / float(lapTime_);
 	transform_->position = GetCatmullPoint(controllPoints_, t);
-	transform_->position -= Vector3(0.0f, -2.0f, 5.0f);
+	transform_->position -= Vector3(0.0f, -2.0f, 0.0f);
 
 	camera_->MakeMatrix();
 }

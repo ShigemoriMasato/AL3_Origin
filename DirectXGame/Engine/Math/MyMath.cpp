@@ -608,10 +608,11 @@ Vector3 MyMath::EaseOut(Vector3 a, Vector3 b, float t) {
 	);
 }
 
-Vector3 MyMath::Sleap(Vector3 a, Vector3 b, float t) {
+Vector3 MyMath::Slerp(Vector3 a, Vector3 b, float t) {
 	if (t <= 0.0f) return a;
 	if (t >= 1.0f) return b;
-	float theta = std::acosf(a.x * b.x + a.y * b.y + a.z * b.z);
+	float dotProduct = std::clamp(dot(a, b), 0.0f, 1.0f);
+	float theta = std::acosf(dotProduct);
 	float sinTheta = std::sinf(theta);
 	if (sinTheta < 1e-6f) {
 		return a;
@@ -651,6 +652,18 @@ float MyMath::cot(float radian) {
 Vector3 MyMath::Normalize(Vector3 vec) {
 	float length = std::sqrtf(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
 	return { vec.x / length, vec.y / length, vec.z / length };
+}
+
+Vector3 MyMath::cross(const Vector3& a, const Vector3& b) {
+	return Vector3(
+		a.y * b.z - a.z * b.y,
+		a.z * b.x - a.x * b.z,
+		a.x * b.y - a.y * b.x
+	);
+}
+
+float MyMath::dot(const Vector3& a, const Vector3& b) {
+	return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
 Matrix3x3 Matrix::Inverse(const Matrix3x3& mat) {

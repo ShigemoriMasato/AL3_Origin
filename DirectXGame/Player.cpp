@@ -4,8 +4,9 @@
 #include <algorithm>
 #include <numbers>
 
-Player::Player(Camera* camera, int modelHandle, int bullethandle) : Object(camera, ShapeType::Model),
-playerTransform_(std::make_shared<Transform>()){
+Player::Player(Camera* camera, Camera* parent, int modelHandle, int bullethandle) : Object(camera, ShapeType::Model),
+playerTransform_(std::make_shared<Transform>()),
+parentCamera_(parent) {
 	handle_ = modelHandle;
 	bulletModelHandle_ = bullethandle;
 	playerTransform_->rotation.y = std::numbers::pi_v<float>;
@@ -57,10 +58,14 @@ void Player::Update() {
 		--cooltime_;
 	}
 	
-	screenTransform_ = MakeAffineMatrix(*playerTransform_) * MakeScaleMatrix(camera_->GetTransform().scale) * Inverse(MakeRotationMatrix(camera_->GetTransform().rotation)) * MakeTranslationMatrix(camera_->GetTransform().position);
+	screenTransform_ = MakeAffineMatrix(*playerTransform_) *
+		MakeScaleMatrix(parentCamera_->GetTransform().scale) *
+		Inverse(MakeRotationMatrix(parentCamera_->GetTransform().rotation)) *
+		MakeTranslationMatrix(parentCamera_->GetTransform().position);
 
 	Vector3 pos = { screenTransform_.m[3][0], screenTransform_.m[3][1] , screenTransform_.m[3][2] };
-	Vector3 rot = playerTransform_->rotation + camera_->GetTransform().rotation;
+	Vector3 rot = playerTransform_->rotation - parentCamera_->GetTransform().rotation;
+	rot.y -= std::numbers::pi_v<float>;
 
 	if (cooltime_ <= 0 && Input::GetKeyState(DIK_SPACE)) {
 		cooltime_ = maxCooltime_;
@@ -91,12 +96,4 @@ void Player::Draws() const {
 	for (const auto& bullet : bullets_) {
 		bullet->Draw();
 	}
-}
-
-Transform Player::GetTransform() const {
-	Transform ans = *playerTransform_;
-	ans.scale *= camera_->GetTransform().scale;
-	ans.rotation += camera_->GetTransform().rotation;
-	ans.position += camera_->GetTransform().position;
-	return ans;
 }

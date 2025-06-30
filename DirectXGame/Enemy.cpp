@@ -13,13 +13,11 @@ void Enemy::Initialize() {
 	transform_->position = { 1.0f, 0.0f, 5.0f };
 	state_ = std::make_shared<EnemyStateApploach>(this);
 	fireCooltime_ = 0;
-	timecall_->Register(std::bind(&Enemy::Fire, this), 30, true);
-	timecall_->Register(std::bind(&Enemy::Death, this), 400, false);
+	timecall_->Register(std::bind(&Enemy::Fire, this), 10, true);
+	timecall_->Register(std::bind(&Enemy::Death, this), 0xfffffff, false);
 }
 
 void Enemy::Update() {
-	state_->Execute();
-
 	timecall_->Update();
 
 	for (int i = 0; i < bullets_.size(); ++i) {

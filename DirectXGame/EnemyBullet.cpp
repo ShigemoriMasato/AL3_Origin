@@ -29,7 +29,7 @@ void EnemyBullet::Initialize() {
 void EnemyBullet::Update() {
 	//向きの更新
 	Vector3 nTrargetPos = Vector3(target_->GetTransform().position - transform_->position).Normalize();
-	direction_ = Sleap(direction_, nTrargetPos, 0.1f);
+	direction_ = Slerp(direction_, nTrargetPos, 0.1f);
 
 	//移動処理
 	velocity_ = direction_ * speed;

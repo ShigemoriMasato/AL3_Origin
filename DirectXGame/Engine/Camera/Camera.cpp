@@ -43,7 +43,7 @@ void Camera::SetProjectionMatrix(OrthographicDesc desc) {
 
 void Camera::MakeMatrix() {
 	if (!isSetMatrix) {
-		transformMatrix_ = MakeScaleMatrix(transform_->scale) * MakeTranslationMatrix(-transform_->position) * MakeRotationMatrix(transform_->rotation);
+		transformMatrix_ = MakeTranslationMatrix(-transform_->position) * MakeRotationMatrix(transform_->rotation) * MakeScaleMatrix(transform_->scale);
 	}
 	vpMatrix = transformMatrix_ * projectionMatrix;
 }

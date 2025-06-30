@@ -36,29 +36,25 @@ void DebugCamera::Update() {
 	float mouseWheel = -Input::GetMouseWheel();
 
 	if (Input::GetKeyState(DIK_LSHIFT)) {
-		center_ += Vector3(mouseMove.x * speed_, mouseMove.y * speed_, mouseWheel * 0.05f) * MakeRotationMatrix(transform_.rotation);
+		center_ += Vector3(mouseMove.x * speed_ * 3.0f, mouseMove.y * speed_ * 3.0f, mouseWheel * 0.05f);
 	} else {
 		spherical_ += Vector3(mouseWheel * 0.05f, mouseMove.y * speed_, -mouseMove.x * speed_);
 	}
 
 	spherical_.x = max(0.01f, spherical_.x); // マイナスにならないようにする
 
-	transform_.position.x = 0.0f;
-	transform_.position.y = 0.0f;
-	transform_.position.z = -spherical_.x;
+	transform_.position.x = std::sinf(spherical_.y) * std::cosf(spherical_.z);
+	transform_.position.y = std::cosf(spherical_.y);
+	transform_.position.z = std::sinf(spherical_.y) * std::sinf(spherical_.z);
 
-	if (adjustRotation) {
-		transform_.rotation = {
-			(spherical_.y - 1.57f),
-			(spherical_.z + 1.57f),
-			0.0f // Z軸回転はなし
-		};
-	}
+	transform_.position *= spherical_.x; // 半径を適用
+
+	transform_.rotation = { -spherical_.y + 1.57f, -spherical_.z - 1.57f, 0.0f };
 
 	//===================
 	//座標の適用
 	//===================
-	camera_.SetTransform(MakeTranslationMatrix(center_) * MakeScaleMatrix(transform_.scale) * MakeRotationMatrix(transform_.rotation) * Inverse(MakeTranslationMatrix(transform_.position)));
+	camera_.SetTransform(MakeScaleMatrix(transform_.scale) * Inverse(MakeTranslationMatrix(transform_.position)) * Inverse(MakeRotationMatrix(transform_.rotation)) * MakeTranslationMatrix(center_));
 	camera_.SetProjectionMatrix(PerspectiveFovDesc());
 	camera_.MakeMatrix();
 }

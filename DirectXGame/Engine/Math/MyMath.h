@@ -122,7 +122,7 @@ namespace MyMath {
 	float EaseOut(float a, float b, float t);
 	Vector3 EaseOut(Vector3 a, Vector3 b, float t);
 
-	Vector3 Sleap(Vector3 a, Vector3 b, float t);
+	Vector3 Slerp(Vector3 a, Vector3 b, float t);
 
 	float Repeat(float value, float max, float min = 0.0f);
 
@@ -132,6 +132,9 @@ namespace MyMath {
 	float cot(float radian);
 
 	Vector3 Normalize(Vector3 vec);
+
+	Vector3 cross(const Vector3& a, const Vector3& b);
+	float dot(const Vector3& a, const Vector3& b);
 }
 
 class Object;
